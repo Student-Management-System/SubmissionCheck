@@ -17,7 +17,6 @@ package net.ssehub.teaching.submission_check.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -296,9 +295,6 @@ public class FileUtilsTest {
         
         try (FileBlocker blocker = new FileBlocker(file)) {
             FileUtils.parseXml(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            fail("Should throw IOException instead of FileNotFoundException");
         }
     }
     

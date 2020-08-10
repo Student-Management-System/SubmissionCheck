@@ -16,7 +16,6 @@
 package net.ssehub.teaching.submission_check.checks;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
@@ -84,46 +83,68 @@ public class EclipseConfigCheck extends Check {
     public boolean run(File submissionDirectory) {
         boolean success;
         
-        try {
-            new EclipseClasspathFile(new File(submissionDirectory, ".classpath"));
-            EclipseProjectFile project = new EclipseProjectFile(new File(submissionDirectory, ".project"));
-            
-            success = true;
-            
-            if (requireJavaProject) {
-                if (!project.getBuilders().contains(EclipseProjectFile.BUILDER_JAVA)
-                        && !project.getNatures().contains(EclipseProjectFile.NATURE_JAVA)) {
-                    success = false;
-                    
-                    ResultMessage message = new ResultMessage(CHECK_NAME, MessageType.ERROR,
-                            "Submission is not a Java project");
-                    message.setFile(new File(".project"));
-                    
-                    addResultMessage(message);
-                }
-            }
-            
-            if (requireCheckstyleProject) {
-                if (!project.getBuilders().contains(EclipseProjectFile.BUILDER_CHECKSTYLE)
-                        && !project.getNatures().contains(EclipseProjectFile.NATURE_CHECKSTYLE)) {
-                    
-                    ResultMessage message = new ResultMessage(CHECK_NAME, MessageType.WARNING,
-                            "Submission does not have Checkstyle enabled");
-                    message.setFile(new File(".project"));
-                    
-                    addResultMessage(message);
-                }
-            }
-            
-        } catch (InvalidEclipseConfigException | FileNotFoundException e) {
+        File classpathFile = new File(submissionDirectory, ".classpath");
+        File projectFile = new File(submissionDirectory, ".project");
+        
+        if (!classpathFile.isFile() || !projectFile.isFile()) {
             success = false;
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "Does not contain a valid eclipse project"));
-            
-        } catch (IOException e) {
-            success = false;
-            addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
-                    "An internal error occurred while checking eclipse project"));
+        } else {
+            try {
+                new EclipseClasspathFile(classpathFile);
+                EclipseProjectFile project = new EclipseProjectFile(projectFile);
+                
+                success = checkProjectContents(project);
+                
+            } catch (InvalidEclipseConfigException e) {
+                success = false;
+                addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
+                        "Does not contain a valid eclipse project"));
+                
+            } catch (IOException e) {
+                success = false;
+                addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
+                        "An internal error occurred while checking eclipse project"));
+            }
+        }
+        
+        return success;
+    }
+    
+    /**
+     * Checks the contents of the {@link EclipseProjectFile} according to the requirements configured by the user.
+     * 
+     * @param project The eclipse project to check.
+     * 
+     * @return Whether all requirements are met.
+     */
+    private boolean checkProjectContents(EclipseProjectFile project) {
+        boolean success = true;
+        
+        if (requireJavaProject) {
+            if (!project.getBuilders().contains(EclipseProjectFile.BUILDER_JAVA)
+                    && !project.getNatures().contains(EclipseProjectFile.NATURE_JAVA)) {
+                success = false;
+                
+                ResultMessage message = new ResultMessage(CHECK_NAME, MessageType.ERROR,
+                        "Submission is not a Java project");
+                message.setFile(new File(".project"));
+                
+                addResultMessage(message);
+            }
+        }
+        
+        if (requireCheckstyleProject) {
+            if (!project.getBuilders().contains(EclipseProjectFile.BUILDER_CHECKSTYLE)
+                    && !project.getNatures().contains(EclipseProjectFile.NATURE_CHECKSTYLE)) {
+                
+                ResultMessage message = new ResultMessage(CHECK_NAME, MessageType.WARNING,
+                        "Submission does not have Checkstyle enabled");
+                message.setFile(new File(".project"));
+                
+                addResultMessage(message);
+            }
         }
         
         return success;

@@ -67,6 +67,23 @@ public class EclipseConfigCheckTest {
     }
     
     @Test
+    public void invalidProjectFIle() {
+        File direcory = new File(TESTDATA, "invalidProject");
+        assertThat("Precondition: directory with test files should exist",
+                direcory.isDirectory(), is(true));
+        
+        EclipseConfigCheck check = new EclipseConfigCheck();
+        
+        assertThat("Postcondition: invalid project file should not succeed",
+                check.run(direcory), is(false));
+        
+        assertThat("Postcondition: should create an error message",
+                check.getResultMessages(), is(Arrays.asList(
+                        new ResultMessage("eclipse-configuration", MessageType.ERROR, "Does not contain a valid eclipse project")
+                )));
+    }
+    
+    @Test
     public void valid() {
         File direcory = new File(TESTDATA, "javaProject");
         assertThat("Precondition: directory with test files should exist",
