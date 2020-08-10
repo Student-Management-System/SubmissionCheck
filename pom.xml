@@ -8,7 +8,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>SubmissionCheck</name>
-	<description>An SVN commit hook that runs several checks for student submissions.</description>
+	<description>A SVN commit-hook that runs several checks for student submissions.</description>
+	<url>https://github.com/Student-Management-System/SubmissionCheck</url>
 
 	<organization>
 		<name>Software Systems Engineering, University of Hildesheim</name>
@@ -21,6 +22,12 @@
 			<url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
 		</license>
 	</licenses>
+
+	<scm>
+		<connection>scm:git:https://github.com/Student-Management-System/SubmissionCheck.git</connection>
+		<developerConnection>scm:git:https://github.com/Student-Management-System/SubmissionCheck.git</developerConnection>
+		<url>https://github.com/Student-Management-System/SubmissionCheck</url>
+	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -151,5 +158,4 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-
 </project>
