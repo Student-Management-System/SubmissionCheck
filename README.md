@@ -6,6 +6,8 @@ follow our formatting rules.
 
 This project is a complete rewrite of the old jSvnSubmitHook.
 
+[![Build Status](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/badge/icon?style=flat-square)](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/)
+
 ## Checks
 
 This hook performs a number of different checks on student submissions. Some
