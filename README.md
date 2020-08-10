@@ -94,6 +94,6 @@ If a rejecting check has failed, this hook will cause the pre-commit phase to
 fail. If a non-rejecting task has failed, this hook will cause the post-commit
 phase to fail. In both cases, an XML message is sent to the client that
 contains the output error and warning messages from the checks. See
-[`doc/xmlFormat.md`](doc/xmlFormat.md] for an explanation of the XML output
+[`doc/xmlFormat.md`](doc/xmlFormat.md) for an explanation of the XML output
 format. This XML format is compatible with the old jSvnSubmitHook so that all
 old submission tools can be used without modification.
