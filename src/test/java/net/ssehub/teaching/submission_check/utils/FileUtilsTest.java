@@ -297,6 +297,7 @@ public class FileUtilsTest {
         try (FileBlocker blocker = new FileBlocker(file)) {
             FileUtils.parseXml(file);
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
             fail("Should throw IOException instead of FileNotFoundException");
         }
     }
