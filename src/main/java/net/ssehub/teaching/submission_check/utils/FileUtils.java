@@ -16,8 +16,12 @@
 package net.ssehub.teaching.submission_check.utils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.HashSet;
@@ -45,6 +49,8 @@ public class FileUtils {
     private static boolean shutdownHookRegistered;
     
     private static Set<File> temporaryDirectories = new HashSet<>();
+    
+    private static boolean fileOperationsShouldFail;
     
     /**
      * Don't allow any instances.
@@ -149,6 +155,96 @@ public class FileUtils {
     }
     
     /**
+     * Rigs file operations to throw {@link IOException}s. Supported methods:
+     * <ul>
+     *  <li>{@link #newInputStream(File)} returns a stream that throws on read operations</li>
+     *  <li>{@link #newReader(File)} returns a reader that throws on read operations</li>
+     *  <li>{@link #deleteFile(File)} always throws</li>
+     * </ul>
+     * 
+     * @param fileReadingShouldFail Whether all newly created file readers should throw {@link IOException}s.
+     */
+    static void setRigFileOperationsToFail(boolean fileReadingShouldFail) {
+        FileUtils.fileOperationsShouldFail = fileReadingShouldFail;
+    }
+    
+    /**
+     * Creates an {@link InputStream} to read the contents of the given file. This should be preferred over
+     * directly creating a {@link FileInputStream} as this method allows test cases to force {@link IOException}s
+     * for testing purposes.
+     * 
+     * @param file The file to read.
+     * 
+     * @return An {@link InputStream} for the file's content.
+     * 
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a regular file, or for 
+     *         some other reason cannot be opened for reading.
+     */
+    public static InputStream newInputStream(File file) throws FileNotFoundException {
+        InputStream result;
+        if (!fileOperationsShouldFail) {
+            result = new FileInputStream(file);
+        } else {
+            result = new InputStream() {
+                
+                @Override
+                public int read() throws IOException {
+                    throw new IOException("Rigged to fail");
+                }
+            };
+        }
+        return result;
+    }
+    
+    /**
+     * Creates a {@link Reader} to read the contents of the given file. Uses the default charset. This should
+     * be preferred over directly creating a {@link FileReader} as this method allows test cases to force
+     * {@link IOException}s for testing purposes.
+     * 
+     * @param file The file to read.
+     * 
+     * @return An {@link Reader} for the file's content.
+     * 
+     * @throws FileNotFoundException If the file does not exist, is a directory rather than a regular file, or for 
+     *         some other reason cannot be opened for reading.
+     */
+    public static Reader newReader(File file) throws FileNotFoundException {
+        Reader result;
+        if (!fileOperationsShouldFail) {
+            result = new FileReader(file);
+        } else {
+            result = new Reader() {
+                
+                @Override
+                public int read(char[] cbuf, int off, int len) throws IOException {
+                    throw new IOException("Rigged to fail");
+                }
+                
+                @Override
+                public void close() throws IOException {
+                    
+                }
+            };
+        }
+        return result;
+    }
+    
+    /**
+     * Deletes a single file or an empty directory.
+     * 
+     * @param file The file to delete.
+     * 
+     * @throws IOException If the given file is not a file or deletion fails.
+     */
+    public static void deleteFile(File file) throws IOException {
+        if (fileOperationsShouldFail) {
+            throw new IOException("Rigged to fail");
+        }
+        
+        Files.delete(file.toPath());
+    }
+    
+    /**
      * Parses the XML content of the given file.
      * 
      * @param file The file to parse.
@@ -167,7 +263,7 @@ public class FileUtils {
             throw new RuntimeException(e); // cannot happen
         }
         parser.setErrorHandler(null);
-        Document result = parser.parse(file);
+        Document result = parser.parse(newInputStream(file));
         result.normalize();
         return result;
     }
@@ -188,15 +284,11 @@ public class FileUtils {
             if (file.isDirectory()) {
                 deleteDirectory(file);
             } else {
-                if (!file.delete()) {
-                    throw new IOException("Could not delete file " + file);
-                }
+                deleteFile(file);
             }
         }
         
-        if (!directory.delete()) {
-            throw new IOException("Could not delete directory " + directory);
-        }
+        deleteFile(directory);
     }
     
     /**
@@ -215,9 +307,7 @@ public class FileUtils {
         }
         
         File temporaryFile = File.createTempFile("submission-check", null);
-        if (!temporaryFile.delete()) {
-            throw new IOException("Could not delete temporary file");
-        }
+        deleteFile(temporaryFile);
         
         if (!temporaryFile.mkdir()) {
             throw new IOException("Could not create temporary directory");

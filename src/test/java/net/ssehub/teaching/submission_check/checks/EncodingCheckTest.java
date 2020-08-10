@@ -29,7 +29,7 @@ import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
-import net.ssehub.teaching.submission_check.utils.FileBlocker;
+import net.ssehub.teaching.submission_check.utils.FileUtilsTest;
 
 public class EncodingCheckTest {
 
@@ -125,9 +125,11 @@ public class EncodingCheckTest {
         File file = new File(directory, "umlauts.txt");
         assertThat("Precondition: file should exist",
                 file.isFile(), is(true));
-        try (FileBlocker blocker = new FileBlocker(file)) {
+        try {
             
             EncodingCheck check = new EncodingCheck();
+            
+            FileUtilsTest.setRigFileOperationsToFail(true);
             
             assertThat("Postcondition: should not succeed on unreadable file",
                     check.run(directory), is(false));
@@ -136,6 +138,8 @@ public class EncodingCheckTest {
                     check.getResultMessages(), is(Arrays.asList(
                             new ResultMessage("encoding", MessageType.ERROR, "An internal error occurred while checking file encoding")
                     )));
+        } finally {
+        	FileUtilsTest.setRigFileOperationsToFail(false);
         }
     }
     

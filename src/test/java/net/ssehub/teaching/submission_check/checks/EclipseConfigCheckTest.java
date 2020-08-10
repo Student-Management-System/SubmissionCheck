@@ -26,7 +26,7 @@ import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
-import net.ssehub.teaching.submission_check.utils.FileBlocker;
+import net.ssehub.teaching.submission_check.utils.FileUtilsTest;
 
 public class EclipseConfigCheckTest {
 
@@ -207,9 +207,10 @@ public class EclipseConfigCheckTest {
         File projectFile = new File(direcory, ".project");
         assertThat("Precondition: project file should exist",
                 projectFile.isFile(), is(true));
-        try (FileBlocker blocker = new FileBlocker(projectFile)) {
-            
+        try {
             EclipseConfigCheck check = new EclipseConfigCheck();
+           
+            FileUtilsTest.setRigFileOperationsToFail(true);
             
             assertThat("Postcondition: should not succeed on unreadable file",
                     check.run(direcory), is(false));
@@ -218,6 +219,8 @@ public class EclipseConfigCheckTest {
                     check.getResultMessages(), is(Arrays.asList(
                             new ResultMessage("eclipse-configuration", MessageType.ERROR, "An internal error occurred while checking eclipse project")
                     )));
+        } finally {
+        	FileUtilsTest.setRigFileOperationsToFail(false);
         }
     }
     

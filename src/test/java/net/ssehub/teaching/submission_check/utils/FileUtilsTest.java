@@ -35,6 +35,10 @@ public class FileUtilsTest {
     
     private static final File TESTDATA = new File("src/test/resources/FileUtilsTest");
 
+    public static void setRigFileOperationsToFail(boolean fileReadingShouldFail) {
+    	FileUtils.setRigFileOperationsToFail(fileReadingShouldFail);
+    }
+    
     @Test
     public void findSuffixFilesEmptyDirectory() {
         File directory = new File(TESTDATA, "emptyDirectory");
@@ -288,13 +292,16 @@ public class FileUtilsTest {
     }
     
     @Test(expected = IOException.class)
-    public void parseXmlBlockedFile() throws IOException, SAXException {
+    public void parseXmlIoException() throws IOException, SAXException {
         File file = new File(TESTDATA, "valid.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        try (FileBlocker blocker = new FileBlocker(file)) {
+        try {
+        	FileUtilsTest.setRigFileOperationsToFail(true);
             FileUtils.parseXml(file);
+        } finally {
+        	FileUtilsTest.setRigFileOperationsToFail(false);
         }
     }
     
@@ -389,9 +396,12 @@ public class FileUtilsTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        try (FileBlocker blocker = new FileBlocker(file)) {
-            
+        try {
+            setRigFileOperationsToFail(true);
             FileUtils.deleteDirectory(directory);
+            
+        } finally {
+        	setRigFileOperationsToFail(false);
         }
     }
     
@@ -457,14 +467,15 @@ public class FileUtilsTest {
         assertThat("created temporary directory should be empty",
                 tempdir.listFiles().length, is(0));
         
-        File file = new File(tempdir, "some-file.txt");
-        file.createNewFile();
-        try (FileBlocker blocker = new FileBlocker(file)) {
+        try {
+        	setRigFileOperationsToFail(true);
             
             FileUtils.cleanTemporaryFolders();
             
             assertThat("created temporary directory should still exist after failed cleaning",
                     tempdir.isDirectory(), is(true));
+        } finally {
+        	setRigFileOperationsToFail(false);
         }
         
         FileUtils.deleteDirectory(tempdir);

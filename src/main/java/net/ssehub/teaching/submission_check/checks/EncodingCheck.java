@@ -16,8 +16,8 @@
 package net.ssehub.teaching.submission_check.checks;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
@@ -101,7 +101,7 @@ public class EncodingCheck extends Check {
         
         CharsetDecoder decoder = wantedCharset.newDecoder();
         
-        try (FileInputStream input = new FileInputStream(file)) {
+        try (InputStream input = FileUtils.newInputStream(file)) {
             ByteBuffer buffer = ByteBuffer.wrap(input.readAllBytes());
             
             decoder.decode(buffer);

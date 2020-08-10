@@ -16,7 +16,6 @@
 package net.ssehub.teaching.submission_check;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
@@ -34,6 +33,7 @@ import net.ssehub.teaching.submission_check.checks.FileSizeCheck;
 import net.ssehub.teaching.submission_check.checks.InternalJavacCheck;
 import net.ssehub.teaching.submission_check.checks.JavacCheck;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
+import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
  * Represents the preferences set by the user in a configuration file.
@@ -55,7 +55,7 @@ public class Configuration {
      */
     public Configuration(File configurationFile) throws IOException {
         properties = new Properties();
-        properties.load(new FileReader(configurationFile));
+        properties.load(FileUtils.newReader(configurationFile));
     }
     
     /**
