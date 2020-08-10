@@ -92,6 +92,10 @@ public class FileBlocker implements Closeable {
                 e.printStackTrace();
             }
             
+            if (tmp != null) {
+                tmp.delete();
+            }
+            
             System.out.println("fileBlockerWorks() -> " + useFileBlocker);
         }
         return useFileBlocker;
