@@ -51,6 +51,9 @@ public class FileBlocker implements Closeable {
             if (!target.setReadable(false) || target.canRead()) {
                 throw new IOException("Couldn't block file");
             }
+            if (!target.setWritable(false) || target.canWrite()) {
+                throw new IOException("Couldn't block file");
+            }
         }
     }
     
@@ -61,6 +64,7 @@ public class FileBlocker implements Closeable {
             this.raFile.close();
         } else {
             target.setReadable(true);
+            target.setWritable(true);
         }
     }
     
