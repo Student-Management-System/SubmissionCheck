@@ -48,12 +48,15 @@ public class FileBlocker implements Closeable {
             this.raFile = new RandomAccessFile(target, "rwd");
             this.fileLock = raFile.getChannel().lock();
         } else {
-            if (!target.setReadable(false) || target.canRead()) {
+            if (!target.setReadable(false, true) || target.canRead()) {
                 throw new IOException("Couldn't block file");
             }
-            if (!target.setWritable(false) || target.canWrite()) {
+            if (!target.setWritable(false, true) || target.canWrite()) {
                 throw new IOException("Couldn't block file");
             }
+            
+            // also remove writable from parent directory, as this blocks deleting of files
+            target.getParentFile().setWritable(false, true);
         }
     }
     
@@ -63,8 +66,9 @@ public class FileBlocker implements Closeable {
             this.fileLock.release();
             this.raFile.close();
         } else {
-            target.setReadable(true);
-            target.setWritable(true);
+            target.getParentFile().setWritable(true, true);
+            target.setReadable(true, true);
+            target.setWritable(true, true);
         }
     }
     
