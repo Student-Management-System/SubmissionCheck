@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -379,8 +380,8 @@ public class FileUtilsTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        try (RandomAccessFile lock = new RandomAccessFile(file, "rw")) {
-            lock.getChannel().lock();
+        try (RandomAccessFile lock = new RandomAccessFile(file, "rw");
+                FileLock fl = lock.getChannel().lock()) {
             
             FileUtils.deleteDirectory(directory);
         }
@@ -449,8 +450,8 @@ public class FileUtilsTest {
                 tempdir.listFiles().length, is(0));
         
         File file = new File(tempdir, "some-file.txt");
-        try (RandomAccessFile lock = new RandomAccessFile(file, "rw")) {
-            lock.getChannel().lock();
+        try (RandomAccessFile lock = new RandomAccessFile(file, "rw");
+                FileLock fl = lock.getChannel().lock()) {
             
             FileUtils.cleanTemporaryFolders();
             

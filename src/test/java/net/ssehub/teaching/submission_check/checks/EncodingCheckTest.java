@@ -21,6 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -125,8 +126,8 @@ public class EncodingCheckTest {
         File file = new File(directory, "umlauts.txt");
         assertThat("Precondition: file should exist",
                 file.isFile(), is(true));
-        try (RandomAccessFile lock = new RandomAccessFile(file, "rw")) {
-            lock.getChannel().lock();
+        try (RandomAccessFile lock = new RandomAccessFile(file, "rw");
+                FileLock fl = lock.getChannel().lock()) {
             
             EncodingCheck check = new EncodingCheck();
             
