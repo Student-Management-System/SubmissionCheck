@@ -447,6 +447,7 @@ public class FileUtilsTest {
                 tempdir.listFiles().length, is(0));
         
         File file = new File(tempdir, "some-file.txt");
+        file.createNewFile();
         try (FileBlocker blocker = new FileBlocker(file)) {
             
             FileUtils.cleanTemporaryFolders();
