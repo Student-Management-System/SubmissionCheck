@@ -104,6 +104,9 @@ public class InternalJavacCheck extends JavacCheck {
             options.add("-Xlint");
         }
         
+        // disable warnings about possibly deprecated options
+        options.add("-Xlint:-options");
+        
         if (!getClasspath().isEmpty()) {
             options.add("--class-path");
             
