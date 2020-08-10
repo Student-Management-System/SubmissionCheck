@@ -20,14 +20,13 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileLock;
 import java.util.Arrays;
 
 import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
+import net.ssehub.teaching.submission_check.utils.FileBlocker;
 
 public class EclipseConfigCheckTest {
 
@@ -191,8 +190,7 @@ public class EclipseConfigCheckTest {
         File projectFile = new File(direcory, ".project");
         assertThat("Precondition: project file should exist",
                 projectFile.isFile(), is(true));
-        try (RandomAccessFile lock = new RandomAccessFile(projectFile, "rw");
-                FileLock fl = lock.getChannel().lock()) {
+        try (FileBlocker blocker = new FileBlocker(projectFile)) {
             
             EclipseConfigCheck check = new EclipseConfigCheck();
             

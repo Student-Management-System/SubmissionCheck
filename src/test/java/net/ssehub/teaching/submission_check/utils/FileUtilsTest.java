@@ -21,8 +21,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.channels.FileLock;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -380,8 +378,7 @@ public class FileUtilsTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        try (RandomAccessFile lock = new RandomAccessFile(file, "rw");
-                FileLock fl = lock.getChannel().lock()) {
+        try (FileBlocker blocker = new FileBlocker(file)) {
             
             FileUtils.deleteDirectory(directory);
         }
@@ -450,8 +447,7 @@ public class FileUtilsTest {
                 tempdir.listFiles().length, is(0));
         
         File file = new File(tempdir, "some-file.txt");
-        try (RandomAccessFile lock = new RandomAccessFile(file, "rw");
-                FileLock fl = lock.getChannel().lock()) {
+        try (FileBlocker blocker = new FileBlocker(file)) {
             
             FileUtils.cleanTemporaryFolders();
             
