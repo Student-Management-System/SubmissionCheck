@@ -17,6 +17,7 @@ package net.ssehub.teaching.submission_check.utils;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -285,6 +286,19 @@ public class FileUtilsTest {
         Node textNode = childNode.getChildNodes().item(0); 
         assertThat(textNode.getNodeType(), is(Node.TEXT_NODE));
         assertThat(textNode.getTextContent(), is("text"));
+    }
+    
+    @Test(expected = IOException.class)
+    public void parseXmlBlockedFile() throws IOException, SAXException {
+        File file = new File(TESTDATA, "valid.xml");
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        try (FileBlocker blocker = new FileBlocker(file)) {
+            FileUtils.parseXml(file);
+        } catch (FileNotFoundException e) {
+            fail("Should throw IOException instead of FileNotFoundException");
+        }
     }
     
     @Test(expected = IOException.class)
