@@ -93,11 +93,11 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void preCommitAuthor() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repoInTransaction2-6.zip"));
+        File repo = prepareSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
-        TransactionInfo info = svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "2-6");
+        TransactionInfo info = svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "2-2");
         assertThat("Postcondition: should have read correct author name",
                 info.getAuthor(), is("someThirdAuthor"));
     }
@@ -111,11 +111,11 @@ public class CliSvnInterfaceIT {
     
     @Test(expected = SvnException.class)
     public void preInvalidTransaction() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repoInTransaction2-6.zip"));
+        File repo = prepareSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
-        svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "3-1");
+        svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "2-3");
     }
     
     @Test
