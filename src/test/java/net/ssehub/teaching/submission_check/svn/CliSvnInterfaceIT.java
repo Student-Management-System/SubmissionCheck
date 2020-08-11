@@ -39,6 +39,7 @@ import org.junit.Test;
 import net.ssehub.teaching.submission_check.Submission;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
+import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class CliSvnInterfaceIT {
 
@@ -315,6 +316,11 @@ public class CliSvnInterfaceIT {
                 new File(directory, "format").isFile(), is(true));
         
         return directory;
+    }
+    
+    @BeforeClass
+    public static void initLogger() {
+        LoggingSetup.setupStdoutLogging();
     }
     
 }

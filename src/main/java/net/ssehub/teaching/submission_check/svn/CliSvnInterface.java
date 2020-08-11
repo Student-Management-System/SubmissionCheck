@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import net.ssehub.teaching.submission_check.Submission;
@@ -36,6 +38,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
  * @author Adam
  */
 public class CliSvnInterface implements ISvnInterface {
+    
+    private static final Logger LOGGER = Logger.getLogger(CliSvnInterface.class.getName());
     
     protected File repositoryPath;
     
@@ -100,7 +104,7 @@ public class CliSvnInterface implements ISvnInterface {
         
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.directory(this.repositoryPath);
-        builder.redirectError(Redirect.DISCARD); // TODO: store and log error output
+        builder.redirectError(Redirect.PIPE);
         if (outputRedirect != null) {
             builder.redirectOutput(outputRedirect);
         } else {
@@ -110,6 +114,7 @@ public class CliSvnInterface implements ISvnInterface {
         List<String> stdout = null;
         try {
             Process process = builder.start();
+            captureAndLogStderr(process);
             
             if (outputRedirect == null) {
                 stdout = new LinkedList<>();
@@ -133,6 +138,32 @@ public class CliSvnInterface implements ISvnInterface {
         }
         
         return stdout;
+    }
+    
+    /**
+     * Reads the error output stream of the given process and logs it to the {@link #LOGGER} if it's not empty.
+     * 
+     * @param process The process to caputre the error output from.
+     */
+    private void captureAndLogStderr(Process process) {
+        new Thread(() -> {
+            try (BufferedReader stderrReader = new BufferedReader(
+                    new InputStreamReader(process.getErrorStream()))) {
+                
+                StringBuilder stderr = new StringBuilder();
+                String line;
+                while ((line = stderrReader.readLine()) != null) {
+                    stderr.append(line).append('\n');
+                }
+                
+                if (stderr.length() > 0) {
+                    LOGGER.log(Level.WARNING, "Got error output from svnlook:\n" + stderr.toString());
+                }
+                
+            } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "Failed to read stderr from svnlook", e);
+            }
+        }).start();
     }
 
     @Override
