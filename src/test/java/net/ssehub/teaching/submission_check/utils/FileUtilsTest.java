@@ -16,11 +16,15 @@
 package net.ssehub.teaching.submission_check.utils;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashSet;
 
@@ -248,6 +252,162 @@ public class FileUtilsTest {
         
         assertThat("Postcondition: file size should be correct",
                 FileUtils.getFileSize(file), is(2006L));
+    }
+    
+    @Test
+    public void newInputStreamReadsFile() throws IOException {
+        File file = new File(TESTDATA, "textFile.txt");
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        try (InputStream in = FileUtils.newInputStream(file)) {
+            assertThat("Postcondition: should read exact file content",
+                    new String(in.readAllBytes()), is("Hello World!\n"));
+        }
+    }
+    
+    @Test
+    public void newInputStreamRigged() throws IOException {
+        File file = new File(TESTDATA, "textFile.txt");
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        try {
+            setRigFileOperationsToFail(true);
+            
+            InputStream in = FileUtils.newInputStream(file);
+            
+            try {
+                in.read();
+                fail("Read should throw an IOException");
+            } catch (IOException e) {
+                assertThat("Postcondition: should have correct error message",
+                        e.getMessage(), is("Rigged to fail"));
+            }
+            
+        } finally {
+            setRigFileOperationsToFail(false);
+        }
+    }
+    
+    @Test(expected = IOException.class)
+    public void deleteFileNotExisting() throws IOException {
+        File file = new File(TESTDATA, "doesnt_exit");
+        assertThat("Precondition: test file should not exist",
+                file.exists(), is(false));
+        
+        FileUtils.deleteFile(file);
+    }
+    
+    @Test
+    public void deleteFile() throws IOException {
+        File file = File.createTempFile("test-file", null);
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        FileUtils.deleteFile(file);
+        
+        assertThat("Postcondition: file should have been deleted",
+                file.exists(), is(false));
+    }
+    
+    @Test
+    public void deleteFileRigged() throws IOException {
+        File file = File.createTempFile("test-file", null);
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        try {
+            setRigFileOperationsToFail(true);
+            
+            FileUtils.deleteFile(file);
+            fail("should have thrown an IOException");
+            
+        } catch (IOException e) {
+            assertThat("Postcondition: exception should have correct message",
+                    e.getMessage(), is("Rigged to fail"));
+            
+        } finally {
+            setRigFileOperationsToFail(false);
+            
+            file.delete();
+            assertThat("Cleanup: file should have been deleted",
+                    file.exists(), is(false));
+        }
+    }
+    
+    @Test(expected = IOException.class)
+    public void deleteFileNonEmptyDirectory() throws IOException {
+        File directory = new File(TESTDATA, "singleFile");
+        assertThat("Precondition: test directory should exist",
+                directory.isDirectory(), is(true));
+        
+        assertThat("Precondition: test directory should not be empty",
+                directory.listFiles().length, not(is(0)));
+        
+        FileUtils.deleteFile(directory);
+    }
+    
+    @Test
+    public void deleteFileDirectory() throws IOException {
+        File file = File.createTempFile("test-file", null);
+        file.delete();
+        file.mkdir();
+        assertThat("Precondition: test directory should exist",
+                file.isDirectory(), is(true));
+        assertThat("Precondition: test directory should be empty",
+                file.listFiles().length, is(0));
+        
+        FileUtils.deleteFile(file);
+        
+        assertThat("Postcondition: directory should have been deleted",
+                file.exists(), is(false));
+    }
+    
+    @Test
+    public void newReaderReadsFile() throws IOException {
+        File file = new File(TESTDATA, "textFile.txt");
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        try (Reader in = FileUtils.newReader(file)) {
+            char[] buf = new char["Hello World!\n".length()];
+            
+            assertThat("should read full file contet",
+                    in.read(buf), is(buf.length));
+            
+            assertThat("Postcondition: should read exact file content",
+                    new String(buf), is("Hello World!\n"));
+            
+            assertThat("Postcondition: should have reached end of file",
+                    in.read(), is(-1));
+        }
+    }
+    
+    @Test
+    public void newReaderRigged() throws IOException {
+        File file = new File(TESTDATA, "textFile.txt");
+        assertThat("Precondition: test file should exist",
+                file.isFile(), is(true));
+        
+        try {
+            setRigFileOperationsToFail(true);
+            
+            Reader in = FileUtils.newReader(file);
+            
+            try {
+                in.read();
+                fail("Read should throw an IOException");
+            } catch (IOException e) {
+                assertThat("Postcondition: should have correct error message",
+                        e.getMessage(), is("Rigged to fail"));
+            }
+            
+            in.close();
+            
+        } finally {
+            setRigFileOperationsToFail(false);
+        }
     }
     
     @Test(expected = FileNotFoundException.class)

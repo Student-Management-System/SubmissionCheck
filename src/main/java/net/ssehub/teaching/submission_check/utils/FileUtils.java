@@ -221,9 +221,8 @@ public class FileUtils {
                 }
                 
                 @Override
-                public void close() throws IOException {
-                    
-                }
+                public void close() throws IOException {}
+                
             };
         }
         return result;
