@@ -144,7 +144,20 @@ public class CliSvnInterfaceIT {
                 svn.getModifiedSubmissions(new TransactionInfo(repo, "student1", "4", Phase.POST_COMMIT)),
                 is(new HashSet<>(Arrays.asList(
                         new Submission("Homework02Task02", "Group01")
-                        ))));
+                ))));
+    }
+    
+    @Test
+    public void preModifiedSubmissions() throws IOException, SvnException {
+        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2GroupsInTransaction_4-4.zip"));
+        
+        CliSvnInterface svn = new CliSvnInterface();
+        
+        assertThat("Postcondition: should contain the modified submissions",
+                svn.getModifiedSubmissions(new TransactionInfo(repo, "student1", "4-4", Phase.PRE_COMMIT)),
+                is(new HashSet<>(Arrays.asList(
+                        new Submission("Homework02Task02", "Group01")
+                ))));
     }
     
     @Test
@@ -254,6 +267,68 @@ public class CliSvnInterfaceIT {
             assertThat("Postcondition: file content is correct", in.readLine(), is("    "));
             assertThat("Postcondition: file content is correct", in.readLine(), is("    public static void main(String[] args) {"));
             assertThat("Postcondition: file content is correct", in.readLine(), is("        System.out.println(\"main()\");"));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("        Util.method();"));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("    }"));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("    "));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("}"));
+            assertThat("Postcondition: file content is correct",
+                    in.readLine(), is(nullValue()));
+        }
+        
+        File libraryFile = new File(libsDir, "util-lib.jar");
+        assertThat("Postcondition: libs folder contains library file",
+                libraryFile.isFile(), is(true));
+        assertThat("Postcondition: library file has correct size",
+                FileUtils.getFileSize(libraryFile), is(946L));
+    }
+    
+    @Test
+    public void preCheckoutSubmissionWithMultipleFilesAndFolders() throws IOException, SvnException {
+        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2GroupsInTransaction_4-4.zip"));
+        
+        CliSvnInterface svn = new CliSvnInterface();
+        
+        TransactionInfo info = new TransactionInfo(repo, "student1", "4-4", Phase.PRE_COMMIT);
+        
+        File target = FileUtils.createTemporaryDirectory();
+        assertThat("Precondition: temporary target folder is created",
+                target.isDirectory(), is(true));
+        assertThat("Precondition: temporary target folder is empty",
+                target.listFiles().length, is(0));
+        
+        svn.checkoutSubmission(info, new Submission("Homework02Task02", "Group01"), target);
+        
+        assertThat("Postcondition: target folder contains 3 files",
+                target.listFiles().length, is(3));
+        
+        File srcDir = new File(target, "src");
+        assertThat("Postcondition: target folder contains src dir",
+                srcDir.isDirectory(), is(true));
+        
+        File libsDir = new File(target, "libs");
+        assertThat("Postcondition: target folder contains libs dir",
+                libsDir.isDirectory(), is(true));
+        
+        File commentFile = new File(target, "comment.txt");
+        assertThat("Postcondition: target folder contains comment file",
+                commentFile.isFile(), is(true));
+        try (BufferedReader in = new BufferedReader(new FileReader(commentFile))) {
+            assertThat("Postcondition: file content is correct",
+                    in.readLine(), is("This submission has folders and multiple files."));
+            assertThat("Postcondition: file content is correct",
+                    in.readLine(), is(nullValue()));
+        }
+        
+        File sourceFile = new File(srcDir, "Main.java");
+        assertThat("Postcondition: src folder contains source file",
+                sourceFile.isFile(), is(true));
+        try (BufferedReader in = new BufferedReader(new FileReader(sourceFile))) {
+            assertThat("Postcondition: file content is correct", in.readLine(), is("import util.Util;"));
+            assertThat("Postcondition: file content is correct", in.readLine(), is(""));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("public class Main {"));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("    "));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("    public static void main(String[] args) {"));
+            assertThat("Postcondition: file content is correct", in.readLine(), is("        System.out.println(\"main(args)\");"));
             assertThat("Postcondition: file content is correct", in.readLine(), is("        Util.method();"));
             assertThat("Postcondition: file content is correct", in.readLine(), is("    }"));
             assertThat("Postcondition: file content is correct", in.readLine(), is("    "));
