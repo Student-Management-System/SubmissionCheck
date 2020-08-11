@@ -118,9 +118,9 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
         expectedTransactionInfo = info;
         
         modifiedFiles = new String[] {
-                "A   Exercise01/Group05/Homework.java",
-                "U\tExercise01/Group05/Util.java",
-                "D   Exercise05/Group04/Old.java",
+                "A  Exercise01/Group05/Homework.java",
+                "U  Exercise01/Group05/Util.java",
+                "D  Exercise05/Group04/Old.java",
         };
         
         assertThat("Postcondition: should have correct submission paths",
@@ -194,6 +194,29 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
         };
         
         getModifiedSubmissions(info);
+    }
+    
+    @Test
+    public void modifiedSubmissionsSpecialChangeChars() throws SvnException {
+        TransactionInfo info = new TransactionInfo(TESTDATA, "other", "42-g", Phase.POST_COMMIT);
+        expectedTransactionInfo = info;
+        
+        modifiedFiles = new String[] {
+                "A  Exercise01/Group01/Homework.java",
+                "U  Exercise01/Group02/Homework.java",
+                "D  Exercise01/Group03/Homework.java",
+                "_U Exercise01/Group04/Homework.java",
+                "UU Exercise01/Group05/Homework.java",
+        };
+        
+        assertThat("Postcondition: should have correct submission path",
+                getModifiedSubmissions(info), is(new HashSet<>(Arrays.asList(
+                        new Submission("Exercise01", "Group01"),
+                        new Submission("Exercise01", "Group02"),
+                        new Submission("Exercise01", "Group03"),
+                        new Submission("Exercise01", "Group04"),
+                        new Submission("Exercise01", "Group05")
+                ))));
     }
     
     @Test

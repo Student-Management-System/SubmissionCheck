@@ -198,16 +198,16 @@ public class CliSvnInterface implements ISvnInterface {
      * @throws SvnException If the line has an invalid format.
      */
     private Submission getChangedSubmissionFolder(String changeLine) throws SvnException {
-        if (changeLine.length() == 0) {
+        if (changeLine.length() < 2) {
             throw new SvnException("Got empty line from svnlook changed");
         }
         
-        char change = changeLine.charAt(0);
-        if (change != 'A' && change != 'U' && change != 'D') {
+        String change = changeLine.substring(0, 2);
+        if (!change.matches("^((A|D|U) )|_U|UU$")) {
             throw new SvnException("Got invalid change '" + change + "' in line " + changeLine);
         }
         
-        File path = new File(changeLine.substring(1).trim());
+        File path = new File(changeLine.substring(2).trim());
         if (getNumberOfParents(path) > 1) {
             while (getNumberOfParents(path) > 1) {
                 path = path.getParentFile();
