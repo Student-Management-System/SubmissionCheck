@@ -42,6 +42,8 @@ public class LoggingSetupTest {
 
     private static final Logger ROOT_LOGGER = Logger.getLogger("");
     
+    private static final File TESTDATA = new File("src/test/resources");
+    
     @Test
     public void fileLogging() throws IOException {
         UncaughtExceptionHandler previousHandler = Thread.getDefaultUncaughtExceptionHandler();
@@ -234,10 +236,10 @@ public class LoggingSetupTest {
             
             System.setOut(new PrintStream(stdoutBuffer));
             
-            assertThat("Precondition: . is a directory",
-                    new File(".").isDirectory(), is(true));
+            assertThat("Precondition: testdata is a directory",
+                    TESTDATA.isDirectory(), is(true));
             
-            LoggingSetup.setupFileLogging(new File("."));
+            LoggingSetup.setupFileLogging(TESTDATA);
             
             assertThat("Postcondition: a single handler in root logger",
                     ROOT_LOGGER.getHandlers().length, is(1));
@@ -253,6 +255,12 @@ public class LoggingSetupTest {
             
         } finally {
             System.setOut(oldOut);
+            
+            // cleanup
+            File lockFile = new File(TESTDATA.getParentFile(), TESTDATA.getName() + ".lck");
+            if (lockFile.isFile()) {
+                lockFile.delete();
+            }
         }
     }
     
