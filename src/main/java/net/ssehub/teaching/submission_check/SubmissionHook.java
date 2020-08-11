@@ -243,7 +243,12 @@ public class SubmissionHook {
                     + " author: " + info.getAuthor()
                     + " affected submissions: " + hook.getModifiedSubmissions());
             
-            hook.runChecksOnAllModifiedSubmissions();
+            if (!hook.configuration.getUnrestrictedUsers().contains(info.getAuthor())) {
+                hook.runChecksOnAllModifiedSubmissions();
+                
+            } else {
+                LOGGER.log(Level.INFO, info.getAuthor() + " is an unrestrited user, skipping all checks");
+            }
             
         } catch (SvnException | IOException | ConfigurationException e) {
             LOGGER.log(Level.SEVERE, "Exception in main", e);

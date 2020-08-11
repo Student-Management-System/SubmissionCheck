@@ -25,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -117,6 +118,64 @@ public class ConfigurationTest {
                 config.getProperty("maxFileSize", new Submission("Exercise01", "")), is(nullValue()));
     }
     
+    @Test
+    public void unrestrictedUsersNotConfigured() throws IOException {
+        File configFile = new File(TESTDATA, "empty.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should return no unrestricted users",
+                config.getUnrestrictedUsers(), is(new HashSet<>()));
+    }
+    
+    @Test
+    public void unrestrictedUsersEmpty() throws IOException {
+        File configFile = new File(TESTDATA, "unrestrictedUsersEmpty.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should return no unrestricted users",
+                config.getUnrestrictedUsers(), is(new HashSet<>()));
+    }
+    
+    @Test
+    public void oneUnrestrictedUser() throws IOException {
+        File configFile = new File(TESTDATA, "unrestrictedUsersOne.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should return the configured unrestricted user",
+                config.getUnrestrictedUsers(), is(new HashSet<>(Arrays.asList("admin"))));
+    }
+    
+    @Test
+    public void multipleUnrestrictedUsers() throws IOException {
+        File configFile = new File(TESTDATA, "unrestrictedUsersMultiple.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should return the configured unrestricted users",
+                config.getUnrestrictedUsers(), is(new HashSet<>(Arrays.asList("admin", "tutor01", "tutor02"))));
+    }
+    
+    @Test(expected = UnsupportedOperationException.class)
+    public void unrestrictedUsersReadOnly() throws IOException {
+        File configFile = new File(TESTDATA, "empty.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        config.getUnrestrictedUsers().add("something");
+    }
     
     @Test
     public void fileSizeCheckDefault() throws IOException, ConfigurationException {

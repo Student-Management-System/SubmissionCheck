@@ -19,9 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.checks.Check;
@@ -46,6 +49,8 @@ public class Configuration {
     
     private Properties properties;
     
+    private Set<String> unrestrictedUsers;
+    
     /**
      * Creates a {@link Configuration} based on the given properties file written by the user.
      * 
@@ -56,6 +61,21 @@ public class Configuration {
     public Configuration(File configurationFile) throws IOException {
         properties = new Properties();
         properties.load(FileUtils.newReader(configurationFile));
+        initalizeUnrestrictedUsers();
+    }
+    
+    /**
+     * Initialises the {@link #unrestrictedUsers} set based on {@link #properties}.
+     */
+    private void initalizeUnrestrictedUsers() {
+        this.unrestrictedUsers = new HashSet<>();
+        
+        String setting = properties.getProperty("unrestrictedUsers");
+        if (setting != null && !setting.isBlank()) {
+            for (String user : setting.split(",")) {
+                this.unrestrictedUsers.add(user.trim());
+            }
+        }
     }
     
     /**
@@ -109,6 +129,16 @@ public class Configuration {
         if (value != null) {
             then.consume(value);
         }
+    }
+    
+    /**
+     * Returns the set of user-names that have unrestricted access, i.e. no {@link Check}s should be performed for their
+     * submissions.
+     * 
+     * @return The {@link Set} of unrestricted users.
+     */
+    public Set<String> getUnrestrictedUsers() {
+        return Collections.unmodifiableSet(this.unrestrictedUsers);
     }
     
     /**
@@ -301,5 +331,5 @@ public class Configuration {
         
         return checks; 
     }
-    
+
 }
