@@ -100,7 +100,7 @@ public class CliSvnInterface implements ISvnInterface {
         
         ProcessBuilder builder = new ProcessBuilder(command);
         builder.directory(this.repositoryPath);
-        builder.redirectError(Redirect.DISCARD);
+        builder.redirectError(Redirect.DISCARD); // TODO: store and log error output
         if (outputRedirect != null) {
             builder.redirectOutput(outputRedirect);
         } else {
