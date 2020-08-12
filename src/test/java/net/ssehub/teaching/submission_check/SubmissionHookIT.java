@@ -185,13 +185,13 @@ public class SubmissionHookIT {
                 hook.getResultCollector().getAllSuccessful(), is(false));
         assertThat("Postcondition: collector should have correct messages",
                 hook.getResultCollector().getMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "File contains tab characters (this is the first instance).")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "File contains tab characters (this is the first instance)")
                                 .setFile(new File("Main.java")).setLine(3).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "'method def modifier' has incorrect indentation level 8, expected level should be 4.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "'method def modifier' has incorrect indentation level 8, expected level should be 4")
                                 .setFile(new File("Main.java")).setLine(3).setColumn(9),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "'method def' child has incorrect indentation level 16, expected level should be 8.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "'method def' child has incorrect indentation level 16, expected level should be 8")
                                 .setFile(new File("Main.java")).setLine(4).setColumn(17),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "'method def rcurly' has incorrect indentation level 8, expected level should be 4.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "'method def rcurly' has incorrect indentation level 8, expected level should be 4")
                                 .setFile(new File("Main.java")).setLine(5).setColumn(9)
                 )));
     }

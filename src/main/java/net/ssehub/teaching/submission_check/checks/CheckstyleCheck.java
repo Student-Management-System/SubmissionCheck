@@ -219,6 +219,9 @@ public class CheckstyleCheck extends Check {
                     message = "Checkstyle could not parse file";
                     line = 0;
                 }
+                if (message.endsWith(".")) {
+                    message = message.substring(0, message.length() - 1);
+                }
                 
                 ResultMessage resultMessage = new ResultMessage(CHECK_NAME, type, message);
                 

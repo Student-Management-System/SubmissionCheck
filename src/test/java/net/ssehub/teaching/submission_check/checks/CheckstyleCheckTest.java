@@ -103,9 +103,9 @@ public class CheckstyleCheckTest {
         assertThat("Postcondition: should create result messages",
                 check.getResultMessages(), containsInAnyOrder(
                         new ResultMessage("checkstyle", MessageType.ERROR,
-                                "'method def' child has incorrect indentation level 6, expected level should be 8.")
+                                "'method def' child has incorrect indentation level 6, expected level should be 8")
                                 .setFile(new File("HelloWorld.java")).setLine(4).setColumn(7),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "';' is preceded with whitespace.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "';' is preceded with whitespace")
                                 .setFile(new File("HelloWorld.java")).setLine(4).setColumn(42)
                 ));
     }
@@ -177,9 +177,9 @@ public class CheckstyleCheckTest {
         
         assertThat("Postcondition: should create result messages",
                 check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
                             .setFile(new File("HelloWorld.java")).setLine(1).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
                             .setFile(new File("HelloWorld.java")).setLine(3).setColumn(5)
                 ));
     }
@@ -212,13 +212,13 @@ public class CheckstyleCheckTest {
         
         assertThat("Postcondition: should not create any result messages",
                 check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
                             .setFile(new File("main/Main.java")).setLine(5).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
                             .setFile(new File("main/Main.java")).setLine(7).setColumn(5),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
                             .setFile(new File("util/Util.java")).setLine(3).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment.")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
                             .setFile(new File("util/Util.java")).setLine(5).setColumn(5)
                 ));
     }
@@ -284,7 +284,7 @@ public class CheckstyleCheckTest {
         
         assertThat("Postcondition: should create warning messages",
                 check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.WARNING, "'public' modifier out of order with the JLS suggestions.")
+                        new ResultMessage("checkstyle", MessageType.WARNING, "'public' modifier out of order with the JLS suggestions")
                                 .setFile(new File("HelloWorld.java")).setLine(3).setColumn(12)
                 )));
     }
