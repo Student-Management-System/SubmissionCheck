@@ -188,37 +188,21 @@ public class ResultMessage implements Comparable<ResultMessage> {
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("ResultMessage [");
-        if (checkName != null) {
-            builder.append("checkName=");
-            builder.append(checkName);
-            builder.append(", ");
-        }
-        if (type != null) {
-            builder.append("type=");
-            builder.append(type);
-            builder.append(", ");
-        }
-        if (message != null) {
-            builder.append("message=");
-            builder.append(message);
-            builder.append(", ");
-        }
+        
+        builder.append(checkName).append(' ').append(type);
+        
         if (file != null) {
-            builder.append("file=");
-            builder.append(file);
-            builder.append(", ");
+            builder.append(" in ").append(file.getPath());
+            if (line != null) {
+                builder.append(':').append(line);
+                if (column != null) {
+                    builder.append(':').append(column);
+                }
+            }
         }
-        if (line != null) {
-            builder.append("line=");
-            builder.append(line);
-            builder.append(", ");
-        }
-        if (column != null) {
-            builder.append("column=");
-            builder.append(column);
-        }
-        builder.append("]");
+        
+        builder.append(" \"").append(message).append('"');
+        
         return builder.toString();
     }
     

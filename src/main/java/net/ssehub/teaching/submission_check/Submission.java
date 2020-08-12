@@ -87,7 +87,7 @@ public class Submission {
 
     @Override
     public String toString() {
-        return "Submission [" + exercise + '/' + group + "]";
+        return  exercise + '/' + group;
     }
     
 }

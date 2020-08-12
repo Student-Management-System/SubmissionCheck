@@ -50,8 +50,8 @@ public class SubmissionTest {
         Submission s1 = new Submission("Exercise03", "Group05");
         Submission s2 = new Submission("Homework10", "Friends");
         
-        assertThat(s1.toString(), is("Submission [Exercise03/Group05]"));
-        assertThat(s2.toString(), is("Submission [Homework10/Friends]"));
+        assertThat(s1.toString(), is("Exercise03/Group05"));
+        assertThat(s2.toString(), is("Homework10/Friends"));
     }
     
     @Test

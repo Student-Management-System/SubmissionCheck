@@ -42,7 +42,7 @@ public class ResultMessageTest {
         assertThat(message.getLine(), is(nullValue()));
         assertThat(message.getColumn(), is(nullValue()));
         
-        assertThat(message.toString(), is("ResultMessage [checkName=some-tool, type=error, message=some message, ]"));
+        assertThat(message.toString(), is("some-tool error \"some message\""));
     }
     
     @Test
@@ -57,8 +57,7 @@ public class ResultMessageTest {
         assertThat(message.getLine(), is(nullValue()));
         assertThat(message.getColumn(), is(nullValue()));
         
-        assertThat(message.toString(), is("ResultMessage [checkName=some-other-tool, type=error, message=a file message, file="
-                + new File("some/file.txt") + ", ]"));
+        assertThat(message.toString(), is("some-other-tool error in " +  new File("some/file.txt") + " \"a file message\""));
     }
     
     @Test
@@ -73,9 +72,8 @@ public class ResultMessageTest {
         assertThat(message.getFile(), is(new File("some/file.txt")));
         assertThat(message.getLine(), is(125));
         assertThat(message.getColumn(), is(nullValue()));
-        
-        assertThat(message.toString(), is("ResultMessage [checkName=javac, type=warning, message=a file message, file="
-                + new File("some/file.txt") + ", line=125, ]"));
+
+        assertThat(message.toString(), is("javac warning in " +  new File("some/file.txt") + ":125 \"a file message\""));
     }
     
     @Test
@@ -90,9 +88,8 @@ public class ResultMessageTest {
         assertThat(message.getFile(), is(new File("Source.java")));
         assertThat(message.getLine(), is(6));
         assertThat(message.getColumn(), is(534));
-        
-        assertThat(message.toString(), is("ResultMessage [checkName=checkstyle, type=warning, message=now with column, file="
-                + "Source.java, line=6, column=534]"));
+
+        assertThat(message.toString(), is("checkstyle warning in Source.java:6:534 \"now with column\""));
     }
     
     @Test
