@@ -191,7 +191,7 @@ public class EclipseConfigCheckTest {
                 direcory.isDirectory(), is(true));
         
         EclipseConfigCheck check = new EclipseConfigCheck();
-        check.setRequireJavaProject(true);
+        check.setRequireCheckstyleProject(true);
         
         assertThat("Postcondition: a Checkstyle project should succeed when required",
                 check.run(direcory), is(true));
