@@ -18,15 +18,12 @@ package net.ssehub.teaching.submission_check;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-import java.io.File;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
-import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class ResultCollectorTest {
 
@@ -140,125 +137,6 @@ public class ResultCollectorTest {
         collector.addCheckResult(false);
         assertThat("Postcondition: further results do not modify failure",
                 collector.getAllSuccessful(), is(false));
-    }
-    
-    @Test
-    public void serializeSingleMessage() {
-        ResultCollector collector = new ResultCollector();
-        
-        collector.addMessage(new ResultMessage("toolname", MessageType.ERROR, "my message"));
-        
-        String linefeed = System.lineSeparator();
-        
-        assertThat("Postcondition: should have correct format",
-                collector.serializeMessages(), is(
-                        "<submitResults>" + linefeed
-                        + "    <message message=\"my message\" tool=\"toolname\" type=\"error\"/>" + linefeed
-                        + "</submitResults>" + linefeed
-                ));
-    }
-    
-    @Test
-    public void serializeSingleBasicMessageWithFile() {
-        ResultCollector collector = new ResultCollector();
-        
-        collector.addMessage(new ResultMessage("toolname", MessageType.ERROR, "my message").setFile(new File("dir/file.txt")));
-        
-        String linefeed = System.lineSeparator();
-        
-        assertThat("Postcondition: should have correct format",
-                collector.serializeMessages(), is(
-                        "<submitResults>" + linefeed
-                        + "    <message file=\"dir/file.txt\" message=\"my message\" tool=\"toolname\" type=\"error\"/>" + linefeed
-                        + "</submitResults>" + linefeed
-                ));
-    }
-    
-    @Test
-    public void serializeSingleBasicMessageWithFileAndLine() {
-        ResultCollector collector = new ResultCollector();
-        
-        collector.addMessage(new ResultMessage("toolname", MessageType.ERROR, "my message").setFile(new File("dir/file.txt")).setLine(595));
-        
-        String linefeed = System.lineSeparator();
-        
-        assertThat("Postcondition: should have correct format",
-                collector.serializeMessages(), is(
-                        "<submitResults>" + linefeed
-                        + "    <message file=\"dir/file.txt\" line=\"595\" message=\"my message\" tool=\"toolname\" type=\"error\"/>" + linefeed
-                        + "</submitResults>" + linefeed
-                ));
-    }
-    
-    @Test
-    public void serializeSingleBasicMessageWithFileAndLineAndColumn() {
-        ResultCollector collector = new ResultCollector();
-        
-        collector.addMessage(new ResultMessage("toolname", MessageType.ERROR, "my message").setFile(new File("dir/file.txt")).setLine(595).setColumn(67));
-        
-        String linefeed = System.lineSeparator();
-        
-        assertThat("Postcondition: should have correct format",
-                collector.serializeMessages(), is(
-                        "<submitResults>" + linefeed
-                        + "    <message file=\"dir/file.txt\" line=\"595\" message=\"my message\" tool=\"toolname\" type=\"error\">" + linefeed
-                        + "        <example position=\"67\"/>" + linefeed
-                        + "    </message>" + linefeed
-                        + "</submitResults>" + linefeed
-                ));
-    }
-    
-    @Test
-    public void serializeSpecialCharacters() {
-        ResultCollector collector = new ResultCollector();
-        
-        collector.addMessage(new ResultMessage("too<l>name", MessageType.ERROR, "my \"message\""));
-        
-        String linefeed = System.lineSeparator();
-        
-        assertThat("Postcondition: should have correct format",
-                collector.serializeMessages(), is(
-                        "<submitResults>" + linefeed
-                        + "    <message message=\"my &quot;message&quot;\" tool=\"too&lt;l&gt;name\" type=\"error\"/>" + linefeed
-                        + "</submitResults>" + linefeed
-                ));
-    }
-    
-    @Test
-    public void serializedEmpty() {
-        ResultCollector collector = new ResultCollector();
-        
-        assertThat("Postcondition: serialized messages should be empty for empty collector",
-                collector.serializeMessages(), is("<submitResults/>" + System.lineSeparator()));
-    }
-    
-    @Test
-    public void serializeMultipleMessages() {
-        ResultCollector collector = new ResultCollector();                
-        
-        collector.addMessage(new ResultMessage("toolB", MessageType.ERROR, "message number 1"));
-        collector.addMessage(new ResultMessage("toolA", MessageType.ERROR, "abc is wrong").setFile(new File("abc.txt")));
-        collector.addMessage(new ResultMessage("toolA", MessageType.WARNING, "numbers are wrong too").setFile(new File("dir/numbers.txt")).setLine(5));
-        collector.addMessage(new ResultMessage("toolC", MessageType.ERROR, "you got many lines").setFile(new File("huge.csv")).setLine(2132132131).setColumn(10));
-        
-        String linefeed = System.lineSeparator();
-        
-        assertThat("Postcondition: format string should contain correct messages",
-                collector.serializeMessages(), is(
-                        "<submitResults>" + linefeed
-                        + "    <message message=\"message number 1\" tool=\"toolB\" type=\"error\"/>" + linefeed
-                        + "    <message file=\"abc.txt\" message=\"abc is wrong\" tool=\"toolA\" type=\"error\"/>" + linefeed
-                        + "    <message file=\"dir/numbers.txt\" line=\"5\" message=\"numbers are wrong too\" tool=\"toolA\" type=\"warning\"/>" + linefeed
-                        + "    <message file=\"huge.csv\" line=\"2132132131\" message=\"you got many lines\" tool=\"toolC\" type=\"error\">" + linefeed
-                        + "        <example position=\"10\"/>" + linefeed
-                        + "    </message>" + linefeed
-                        + "</submitResults>" + linefeed
-                ));
-    }
-    
-    @BeforeClass
-    public static void initLogger() {
-        LoggingSetup.setupStdoutLogging();
     }
     
 }

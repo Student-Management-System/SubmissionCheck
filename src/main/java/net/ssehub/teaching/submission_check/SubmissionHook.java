@@ -24,6 +24,7 @@ import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.checks.Check;
+import net.ssehub.teaching.submission_check.otuput.XmlOutputFormatter;
 import net.ssehub.teaching.submission_check.svn.CliSvnInterface;
 import net.ssehub.teaching.submission_check.svn.ISvnInterface;
 import net.ssehub.teaching.submission_check.svn.SvnException;
@@ -263,7 +264,7 @@ public class SubmissionHook {
             resultCollector.addMessage(new ResultMessage("hook", MessageType.ERROR, "An internal error occurred"));
         }
 
-        System.err.println(resultCollector.serializeMessages());
+        System.err.println(new XmlOutputFormatter().format(resultCollector.getMessages()));
         return resultCollector.getExitCode(phase);
     }
     
