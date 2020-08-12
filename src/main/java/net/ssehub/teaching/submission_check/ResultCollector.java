@@ -193,14 +193,10 @@ public class ResultCollector {
      * @return An XML representation of all messages.
      * 
      * @throws DOMException If creating the XML fails.
+     * @throws ParserConfigurationException If creating the {@link Document} fails.
      */
-    private Document createXmlDocumentForMessages() throws DOMException {
-        Document document;
-        try {
-            document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
-        } catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
+    private Document createXmlDocumentForMessages() throws DOMException, ParserConfigurationException {
+        Document document = DocumentBuilderFactory.newDefaultInstance().newDocumentBuilder().newDocument();
         
         Node rootNode = document.createElement("submitResults");
         document.appendChild(rootNode);
@@ -230,7 +226,7 @@ public class ResultCollector {
             xmlPrinter.transform(new DOMSource(createXmlDocumentForMessages()), new StreamResult(output));
             
             result = output.toString();
-        } catch (DOMException | TransformerException e) {
+        } catch (DOMException | TransformerException | ParserConfigurationException e) {
             LOGGER.log(Level.SEVERE, "Failed to create XML for result message", e);
             result = "<submitResults>\n"
                     + "    <message type=\"error\" message=\"Internal error: failed to create XML message\"/>\n"
