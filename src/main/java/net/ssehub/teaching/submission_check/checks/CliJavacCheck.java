@@ -173,23 +173,17 @@ public class CliJavacCheck extends JavacCheck {
             Matcher matcher = JAVAC_OUTPUT_PATTERN.matcher(line);
             if (matcher.matches()) {
                 MessageType type = MessageType.valueOf(matcher.group("type").toUpperCase());
-                File file = new File(matcher.group("filename"));
-                int lineNumber = Integer.parseInt(matcher.group("line"));
+                ResultMessage message = new ResultMessage(CHECK_NAME, type, matcher.group("message"));
                 
-                Integer column = null;
+                message.setFile(new File(matcher.group("filename")));
+                message.setLine(Integer.parseInt(matcher.group("line")));
+                
                 if (output.size() > i + 2) {
                     String caretLine = output.get(i + 2);
                     if (caretLine.trim().equals("^")) {
-                        column = caretLine.indexOf('^') + 1;
+                        message.setColumn(caretLine.indexOf('^') + 1);
                         i += 2;
                     }
-                }
-                
-                ResultMessage message = new ResultMessage(CHECK_NAME, type, matcher.group("message"));
-                message.setFile(file);
-                message.setLine(lineNumber);
-                if (column != null) {
-                    message.setColumn(column);
                 }
                 
                 addResultMessage(message);
