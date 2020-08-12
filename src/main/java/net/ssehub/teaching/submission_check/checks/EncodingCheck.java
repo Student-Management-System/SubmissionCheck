@@ -77,7 +77,11 @@ public class EncodingCheck extends Check {
             for (File file : FileUtils.findAllFiles(submissionDirectory)) {
                 String mimeType = Files.probeContentType(file.toPath());
                 if (mimeType != null && mimeType.startsWith("text")) {
+                    LOGGER.log(Level.FINER, "Checking file {0}...", file);
                     success &= checkFile(file, submissionDirectory);
+                } else {
+                    LOGGER.log(Level.FINER, "Skipping file {0} with non-text mime-type {1}", new Object[] {
+                        file, mimeType});
                 }
             }
             

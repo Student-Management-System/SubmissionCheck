@@ -96,6 +96,8 @@ public class EclipseConfigCheck extends Check {
                     "Does not contain a valid eclipse project"));
         } else {
             try {
+                LOGGER.log(Level.FINER, "Found .classpath and .project, parsing them...");
+                
                 new EclipseClasspathFile(classpathFile);
                 EclipseProjectFile project = new EclipseProjectFile(projectFile);
                 
@@ -127,6 +129,8 @@ public class EclipseConfigCheck extends Check {
      */
     private boolean checkProjectContents(EclipseProjectFile project) {
         boolean success = true;
+        
+        LOGGER.log(Level.FINER, "Checking project setup");
         
         if (requireJavaProject) {
             if (!project.getNatures().contains(EclipseProjectFile.NATURE_JAVA)) {

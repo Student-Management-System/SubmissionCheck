@@ -51,6 +51,8 @@ public class Configuration {
     
     private Set<String> unrestrictedUsers;
     
+    private String logLevel;
+    
     /**
      * Creates a {@link Configuration} based on the given properties file written by the user.
      * 
@@ -61,7 +63,12 @@ public class Configuration {
     public Configuration(File configurationFile) throws IOException {
         properties = new Properties();
         properties.load(FileUtils.newReader(configurationFile));
+        
         initalizeUnrestrictedUsers();
+        this.logLevel = properties.getProperty("logLevel");
+        if (this.logLevel == null) {
+            this.logLevel = "INFO";
+        }
     }
     
     /**
@@ -133,12 +140,21 @@ public class Configuration {
     
     /**
      * Returns the set of user-names that have unrestricted access, i.e. no {@link Check}s should be performed for their
-     * submissions.
+     * submissions. If not explicitly configured, this is an empty set.
      * 
      * @return The {@link Set} of unrestricted users.
      */
     public Set<String> getUnrestrictedUsers() {
         return Collections.unmodifiableSet(this.unrestrictedUsers);
+    }
+    
+    /**
+     * Returns the log level that is configured by the user. If not explicitly configured, this is "INFO".
+     * 
+     * @return The configured log level.
+     */
+    public String getLogLevel() {
+        return logLevel;
     }
     
     /**

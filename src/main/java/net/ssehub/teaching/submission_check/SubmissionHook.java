@@ -242,6 +242,7 @@ public class SubmissionHook {
     public int execute(File configurationFile) {
         try {
             readConfiguration(configurationFile);
+            LoggingSetup.setLevel(configuration.getLogLevel());
             
             queryMetadataFromSvn();
             

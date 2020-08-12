@@ -190,6 +190,30 @@ public class ConfigurationTest {
     }
     
     @Test
+    public void logLevelDefault() throws IOException {
+        File configFile = new File(TESTDATA, "empty.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should have correct default value",
+                config.getLogLevel(), is("INFO"));
+    }
+    
+    @Test
+    public void logLevelConfigured() throws IOException {
+        File configFile = new File(TESTDATA, "logLevel.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should have correct default value",
+                config.getLogLevel(), is("FINER"));
+    }
+    
+    @Test
     public void fileSizeCheckDefault() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "empty.properties");
         assertThat("Precondition: test file should exist",

@@ -36,10 +36,30 @@ public class LoggingSetup {
     
     private static final Logger ROOT_LOGGER = Logger.getLogger("");
     
+    private static Level level = Level.INFO;
+    
     /**
      * Don't allow any instances.
      */
     private LoggingSetup() {}
+    
+    /**
+     * Sets the global logging {@link Level}. This affects the current configuration as well as all future
+     * setup*() method calls.
+     * 
+     * @param level The new level as a string. If this is invalid, the level is not changed.
+     * 
+     * @see Level#parse(String)
+     */
+    public static void setLevel(String level) {
+        try {
+            LoggingSetup.level = Level.parse(level);
+            ROOT_LOGGER.setLevel(LoggingSetup.level);
+            
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+    }
     
     /**
      * Sets up the logging to log to a given log-file. If logging to file fails, {@link #setupStdoutLogging()} is used
@@ -61,7 +81,7 @@ public class LoggingSetup {
             }
             
             ROOT_LOGGER.addHandler(handler);
-            ROOT_LOGGER.setLevel(Level.INFO);
+            ROOT_LOGGER.setLevel(level);
             
             Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionLogger());
             
@@ -94,7 +114,7 @@ public class LoggingSetup {
         }
         
         ROOT_LOGGER.addHandler(handler);
-        ROOT_LOGGER.setLevel(Level.INFO);
+        ROOT_LOGGER.setLevel(level);
         
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionLogger());
     }

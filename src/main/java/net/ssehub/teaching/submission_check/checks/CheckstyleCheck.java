@@ -119,6 +119,9 @@ public class CheckstyleCheck extends Check {
     private boolean runCheckstyle(File submissionDirectory, Set<File> javaFiles) {
         boolean success;
         
+        LOGGER.log(Level.FINER, "Using rules: {0}", checkstyleRules);
+        LOGGER.log(Level.FINER, "Running on files: {0}...", javaFiles);
+        
         try {
             Configuration configuration = ConfigurationLoader.loadConfiguration(
                     checkstyleRules.getAbsolutePath(), null);

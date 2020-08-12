@@ -84,6 +84,9 @@ public class CliJavacCheck extends JavacCheck {
         processBuilder.redirectError(Redirect.PIPE);
         processBuilder.directory(submissionDirectory);
         
+        LOGGER.log(Level.FINER, "Running {0} in directory {1}...", new Object[] {
+            processBuilder.command(), submissionDirectory});
+        
         try {
             Process process = processBuilder.start();
             

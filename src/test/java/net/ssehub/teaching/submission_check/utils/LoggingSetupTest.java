@@ -293,6 +293,31 @@ public class LoggingSetupTest {
                 out.exists(), is(false));
     }
     
+    @Test
+    public void levelSetting() throws IOException {
+        try {
+            LoggingSetup.setLevel("INFO");
+            assertThat("Postcondition: Logger should have correct level set",
+                    ROOT_LOGGER.getLevel(), is(Level.INFO));
+            
+            LoggingSetup.setLevel("FINER");
+            assertThat("Postcondition: Logger should have correct level set",
+                    ROOT_LOGGER.getLevel(), is(Level.FINER));
+            
+            LoggingSetup.setLevel("WARNING");
+            assertThat("Postcondition: Logger should have correct level set",
+                    ROOT_LOGGER.getLevel(), is(Level.WARNING));
+            
+            LoggingSetup.setLevel("doesnt exist");
+            assertThat("Postcondition: Logger should ignore invalid level",
+                    ROOT_LOGGER.getLevel(), is(Level.WARNING));
+            
+        } finally {
+            // clean up to default state
+            LoggingSetup.setLevel("INFO");
+        }
+    }
+    
     @Before
     public void removeRootLoggerHandlers() {
         for (Handler handler : ROOT_LOGGER.getHandlers()) {

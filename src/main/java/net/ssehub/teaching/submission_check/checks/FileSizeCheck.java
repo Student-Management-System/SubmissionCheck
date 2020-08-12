@@ -98,6 +98,9 @@ public class FileSizeCheck extends Check {
             for (File file : FileUtils.findAllFiles(submissionDirectory)) {
                 long fileSize = FileUtils.getFileSize(file);
                 
+                LOGGER.log(Level.FINER, "File {0} has size of {1} bytes", new Object[] {
+                    file, fileSize});
+                
                 submissionSize += fileSize;
                 
                 if (fileSize > this.maxFileSize) {
@@ -116,6 +119,8 @@ public class FileSizeCheck extends Check {
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "An internal error occurred while checking file-sizes"));
         }
+        
+        LOGGER.log(Level.FINER, "Submission has total size of {0} bytes", submissionSize);
         
         if (submissionSize > this.maxSubmissionSize) {
             numErrors++;

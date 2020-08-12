@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -35,6 +37,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
 public abstract class JavacCheck extends Check {
     
     public static final String CHECK_NAME = "javac";
+    
+    private static final Logger LOGGER = Logger.getLogger(JavacCheck.class.getName());
     
     private int javaVersion;
     
@@ -153,6 +157,7 @@ public abstract class JavacCheck extends Check {
         Set<File> javaFiles = FileUtils.findFilesBySuffix(submissionDirectory, ".java");
         
         if (!javaFiles.isEmpty()) {
+            LOGGER.log(Level.FINER, "Compiling files {0}...", javaFiles);
             success = runJavac(submissionDirectory, javaFiles);
             
         } else {
