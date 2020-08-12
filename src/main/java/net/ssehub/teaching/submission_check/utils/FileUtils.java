@@ -326,12 +326,10 @@ public class FileUtils {
     static void cleanTemporaryFolders() {
         synchronized (temporaryDirectories) {
             for (File directory : temporaryDirectories) {
-                if (directory.isDirectory()) {
-                    try {
-                        deleteDirectory(directory);
-                    } catch (IOException e) {
-                        LOGGER.log(Level.WARNING, "could not delete temporary directory " + directory, e);
-                    }
+                try {
+                    deleteDirectory(directory);
+                } catch (IOException e) {
+                    LOGGER.log(Level.WARNING, "could not delete temporary directory " + directory, e);
                 }
             }
             temporaryDirectories.clear();
