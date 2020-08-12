@@ -3,9 +3,7 @@
 # A script that installs the hook to a SVN repository.
 #
 # Arguments:
-#    1) the location of the submission-check.jar to install
-#       Note: this may have any arbitrary file-name; this script takes care of that
-#    2) the (root) location of the repository
+#    1) the (root) location of the repository
 #
 # This script checks it the inputs are valid and asks the user if previous
 # hooks should be overwritten.
@@ -14,16 +12,32 @@ set -o nounset
 set -o errexit
 set -o pipefail
 
-if [[ ${#} -ne 2 ]]
+if [[ ${#} -ne 1 ]]
 then
-	echo "Usage: ${0} SUBMISSION_CHECK_JAR REPOSITORY"
+	echo "Usage: ${0} REPOSITORY"
 	exit 1
 fi
 
-readonly jarfile="${1}"
-readonly repository="${2}"
+readonly repository="${1}"
 
 function check_jar_file() {
+	local script_dir
+	script_dir="$(dirname "${0}")"
+
+	jarfile=""
+
+	local file
+	for file in "${script_dir}"/*.jar
+	do
+		if [[ ! -z "${jarfile}" ]]
+		then
+			echo "ERROR: Found too many .jar files in release bundle:" "${script_dir}"/*.jar
+			exit 1
+		fi
+
+		jarfile="${file}"
+	done
+
 	if [[ ! -f "${jarfile}" ]]
 	then
 		echo "ERROR: ${jarfile} is not a file"
