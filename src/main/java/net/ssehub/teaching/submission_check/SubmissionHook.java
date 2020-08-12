@@ -74,7 +74,7 @@ public class SubmissionHook {
     public SubmissionHook(String[] args, ISvnInterface svnInterface)
             throws IllegalArgumentException {
         
-        LOGGER.log(Level.INFO, "Hook called with arguments " + Arrays.toString(args));
+        LOGGER.log(Level.INFO, "Hook called with arguments {0}", Arrays.toString(args));
         
         if (args.length != 3) {
             throw new IllegalArgumentException("Expected exactly 3 arguments, got " + args.length);
@@ -217,6 +217,8 @@ public class SubmissionHook {
      * @throws ConfigurationException If the {@link Check}s are not correctly configured.
      */
     public void runChecksOnSubmission(Submission submission) throws IOException, SvnException, ConfigurationException {
+        LOGGER.log(Level.FINE, "Checking submission {0}", submission);
+        
         File checkoutDirecotry = FileUtils.createTemporaryDirectory();
         svnInterface.checkoutSubmission(transactionInfo, submission, checkoutDirecotry);
         
@@ -226,7 +228,8 @@ public class SubmissionHook {
         }
         boolean success = checkRunner.run(checkoutDirecotry);
         
-        LOGGER.log(Level.INFO, "Check result for " + submission + ": " + (success ? "successful" : "unsuccessful"));
+        LOGGER.log(Level.INFO, "Check result for {0}: {1}", new Object[] {
+            submission, success ? "successful" : "unsuccessful"});
     }
     
     /**
@@ -242,15 +245,14 @@ public class SubmissionHook {
             
             queryMetadataFromSvn();
             
-            LOGGER.log(Level.INFO, "TransactionInfo:"
-                    + " author: " + transactionInfo.getAuthor()
-                    + " affected submissions: " + getModifiedSubmissions());
+            LOGGER.log(Level.INFO, "Commit author: {0}, affected submissions: {0}", new Object[] {
+                    transactionInfo.getAuthor(), getModifiedSubmissions()});
             
             if (!configuration.getUnrestrictedUsers().contains(transactionInfo.getAuthor())) {
                 runChecksOnAllModifiedSubmissions();
                 
             } else {
-                LOGGER.log(Level.INFO, transactionInfo.getAuthor() + " is an unrestrited user, skipping all checks");
+                LOGGER.log(Level.INFO, "{0} is an unrestrited user, skipping all checks", transactionInfo.getAuthor());
             }
             
         } catch (SvnException | IOException | ConfigurationException e) {
@@ -260,7 +262,6 @@ public class SubmissionHook {
             resultCollector.addMessage(new ResultMessage("hook", MessageType.ERROR, "An internal error occurred"));
         }
 
-        LOGGER.log(Level.INFO, "Result messages: " + resultCollector.getMessages());
         System.err.println(resultCollector.serializeMessages());
         return resultCollector.getExitCode(phase);
     }
@@ -279,7 +280,7 @@ public class SubmissionHook {
         LoggingSetup.setupFileLogging(new File("submission-check.log"));
         SubmissionHook hook = new SubmissionHook(args, new CliSvnInterface());
         int exitCode = hook.execute(new File("config.properties"));
-        LOGGER.log(Level.INFO, "Exiting with exit code " + exitCode);
+        LOGGER.log(Level.INFO, "Exiting with exit code {0}", exitCode);
         System.exit(exitCode);
     }
     

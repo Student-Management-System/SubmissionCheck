@@ -18,6 +18,8 @@ package net.ssehub.teaching.submission_check;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.checks.Check;
 
@@ -28,6 +30,8 @@ import net.ssehub.teaching.submission_check.checks.Check;
  * @author Adam
  */
 public class CheckRunner {
+    
+    private static final Logger LOGGER = Logger.getLogger(CheckRunner.class.getName());
 
     private List<Check> checksToRun;
     
@@ -69,10 +73,14 @@ public class CheckRunner {
     public boolean run(File submissionDirectory) {
         boolean success = true;
         for (Check check : this.checksToRun) {
+            LOGGER.log(Level.FINE, "Running {0}...", check.getClass().getSimpleName());
             success = check.run(submissionDirectory);
+            LOGGER.log(Level.INFO, "{0} {1}", new Object[] {
+                    check.getClass().getSimpleName(), success ? "succeeded" : "failed"});
             
             resultCollector.addCheckResult(success);
             for (ResultMessage message : check.getResultMessages()) {
+                LOGGER.log(Level.INFO, "{0}", message);
                 resultCollector.addMessage(message);
             }
             

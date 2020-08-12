@@ -329,7 +329,7 @@ public class FileUtils {
                 try {
                     deleteDirectory(directory);
                 } catch (IOException e) {
-                    LOGGER.log(Level.WARNING, "could not delete temporary directory " + directory, e);
+                    LOGGER.log(Level.WARNING, "Could not delete temporary directory " + directory, e);
                 }
             }
             temporaryDirectories.clear();

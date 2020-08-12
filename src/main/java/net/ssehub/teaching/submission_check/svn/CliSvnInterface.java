@@ -157,7 +157,7 @@ public class CliSvnInterface implements ISvnInterface {
                 }
                 
                 if (stderr.length() > 0) {
-                    LOGGER.log(Level.WARNING, "Got error output from svnlook:\n" + stderr.toString());
+                    LOGGER.log(Level.WARNING, "Got error output from svnlook:\n{0}", stderr);
                 }
                 
             } catch (IOException e) {
@@ -260,6 +260,8 @@ public class CliSvnInterface implements ISvnInterface {
     @Override
     public void checkoutSubmission(TransactionInfo transaction, Submission submission, File checkoutLocation)
             throws SvnException, IOException {
+        
+        LOGGER.log(Level.FINER, "Checking out submission {0} to {1}", new Object[] {submission, checkoutLocation});
         
         this.repositoryPath = transaction.getRepository();
         this.phase = transaction.getPhase();

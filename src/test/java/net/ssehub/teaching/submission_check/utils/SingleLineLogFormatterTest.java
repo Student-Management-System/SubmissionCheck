@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -191,6 +192,16 @@ public class SingleLineLogFormatterTest {
         List<String> lines = getLogLines();
         
         assertLine(lines.get(0), " [INFO] [NotInPackage.noDotInClassName] logmessage");
+        assertThat(lines.size(), is(1));
+    }
+    
+    @Test
+    public void messageFormat() {
+        testLogger.log(Level.INFO, "a: {0}, b: {1}", new Object[] {1, new File("test.txt")});
+        
+        List<String> lines = getLogLines();
+        
+        assertLine(lines.get(0), " [INFO] [SingleLineLogFormatterTest.messageFormat] a: 1, b: test.txt");
         assertThat(lines.size(), is(1));
     }
     
