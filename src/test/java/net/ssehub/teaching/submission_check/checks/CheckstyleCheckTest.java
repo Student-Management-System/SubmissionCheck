@@ -138,12 +138,12 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(rulesFile);
         
-        assertThat("Postcondition: running with non-existing checkstyle rules should not succeed",
+        assertThat("Postcondition: running with non-existing Checkstyle rules should not succeed",
                 check.run(directory), is(false));
 
         assertThat("Postcondition: should create result message",
                 check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running checkstyle")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running Checkstyle")
                 )));
     }
     
@@ -160,7 +160,7 @@ public class CheckstyleCheckTest {
         
         assertThat("Postcondition: should create internal error message",
                 check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running checkstyle")
+                        new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running Checkstyle")
                 )));
     }
     
@@ -336,28 +336,28 @@ public class CheckstyleCheckTest {
     
     @BeforeClass
     public static void checkRulesExist() {
-        assertThat("Precondition: checkstyle beginners rule file should exist (" + BEGINNERS_RULES + ")",
+        assertThat("Precondition: Checkstyle beginners rule file should exist (" + BEGINNERS_RULES + ")",
                 BEGINNERS_RULES.isFile());
         
-        assertThat("Precondition: checkstyle OO rule file should exist (" + OO_RULES + ")",
+        assertThat("Precondition: Checkstyle OO rule file should exist (" + OO_RULES + ")",
                 OO_RULES.isFile());
         
-        assertThat("Precondition: checkstyle javadoc rule file should exist (" + JAVADOC_RULES + ")",
+        assertThat("Precondition: Checkstyle javadoc rule file should exist (" + JAVADOC_RULES + ")",
                 JAVADOC_RULES.isFile());
         
-        assertThat("Precondition: checkstyle umlauts rule file should exist (" + UMLAUTS_ALLOWED + ")",
+        assertThat("Precondition: Checkstyle umlauts rule file should exist (" + UMLAUTS_ALLOWED + ")",
                 UMLAUTS_ALLOWED.isFile());
         
-        assertThat("Precondition: checkstyle warning modifier order rule file should exist (" + MODIFIER_ORDER_WARNING + ")",
+        assertThat("Precondition: Checkstyle warning modifier order rule file should exist (" + MODIFIER_ORDER_WARNING + ")",
                 MODIFIER_ORDER_WARNING.isFile());
         
-        assertThat("Precondition: checkstyle info modifier order rule file should exist (" + MODIFIER_ORDER_INFO + ")",
+        assertThat("Precondition: Checkstyle info modifier order rule file should exist (" + MODIFIER_ORDER_INFO + ")",
                 MODIFIER_ORDER_INFO.isFile());
         
-        assertThat("Precondition: checkstyle ignore modifier order rule file should exist (" + MODIFIER_ORDER_IGNORE + ")",
+        assertThat("Precondition: Checkstyle ignore modifier order rule file should exist (" + MODIFIER_ORDER_IGNORE + ")",
                 MODIFIER_ORDER_IGNORE.isFile());
         
-        assertThat("Precondition: checkstyle invalid rule file should exist (" + INVALID_RULES + ")",
+        assertThat("Precondition: Checkstyle invalid rule file should exist (" + INVALID_RULES + ")",
                 INVALID_RULES.isFile());
     }
     

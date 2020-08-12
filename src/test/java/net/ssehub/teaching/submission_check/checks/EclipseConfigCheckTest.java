@@ -158,7 +158,7 @@ public class EclipseConfigCheckTest {
         
         EclipseConfigCheck check = new EclipseConfigCheck();
         
-        assertThat("Postcondition: a non-checkstyle project should succeed when allowed",
+        assertThat("Postcondition: a non-Checkstyle project should succeed when allowed",
                 check.run(direcory), is(true));
         
         assertThat("Postcondition: should not create any messages",
@@ -174,7 +174,7 @@ public class EclipseConfigCheckTest {
         EclipseConfigCheck check = new EclipseConfigCheck();
         check.setRequireCheckstyleProject(true);
         
-        assertThat("Postcondition: a non-checkstyle project should succeed even when not allowed",
+        assertThat("Postcondition: a non-Checkstyle project should succeed even when not allowed",
                 check.run(direcory), is(true));
         
         assertThat("Postcondition: should create an error message",
@@ -193,7 +193,7 @@ public class EclipseConfigCheckTest {
         EclipseConfigCheck check = new EclipseConfigCheck();
         check.setRequireJavaProject(true);
         
-        assertThat("Postcondition: a checkstyle project should succeed when required",
+        assertThat("Postcondition: a Checkstyle project should succeed when required",
                 check.run(direcory), is(true));
         
         assertThat("Postcondition: should not create any messages",

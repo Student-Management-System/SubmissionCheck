@@ -109,7 +109,7 @@ public class CheckstyleCheck extends Check {
     }
 
     /**
-     * Runs checkstyle on the given Java source files in the given directory.
+     * Runs Checkstyle on the given Java source files in the given directory.
      * 
      * @param submissionDirectory The directory to work in.
      * @param javaFiles All Java source files in that directory.
@@ -139,10 +139,10 @@ public class CheckstyleCheck extends Check {
             success = listener.getNumErrors() == 0;
             
         } catch (CheckstyleException | UnsupportedEncodingException e) {
-            LOGGER.log(Level.WARNING, "Exception while running checkstyle", e);
+            LOGGER.log(Level.WARNING, "Exception while running Checkstyle", e);
             
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
-                    "An internal error occurred while running checkstyle"));
+                    "An internal error occurred while running Checkstyle"));
             success = false;
         }
         
