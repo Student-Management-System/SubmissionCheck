@@ -34,7 +34,9 @@ public class LoggingSetup {
 
     private static final Logger LOGGER = Logger.getLogger(LoggingSetup.class.getName());
     
-    private static final Logger ROOT_LOGGER = Logger.getLogger("");
+    private static final Logger GLOBAL_ROOT_LOGGER = Logger.getLogger("");
+    
+    private static final Logger OUR_ROOT_LOGGER = Logger.getLogger("net.ssehub.teaching.submission_check");
     
     private static Level level = Level.INFO;
     
@@ -54,7 +56,7 @@ public class LoggingSetup {
     public static void setLevel(String level) {
         try {
             LoggingSetup.level = Level.parse(level);
-            ROOT_LOGGER.setLevel(LoggingSetup.level);
+            OUR_ROOT_LOGGER.setLevel(LoggingSetup.level);
             
         } catch (IllegalArgumentException e) {
             // ignore
@@ -80,8 +82,8 @@ public class LoggingSetup {
                 // can't happen, ignore
             }
             
-            ROOT_LOGGER.addHandler(handler);
-            ROOT_LOGGER.setLevel(level);
+            OUR_ROOT_LOGGER.addHandler(handler);
+            OUR_ROOT_LOGGER.setLevel(level);
             
             Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionLogger());
             
@@ -113,8 +115,8 @@ public class LoggingSetup {
             // can't happen, ignore
         }
         
-        ROOT_LOGGER.addHandler(handler);
-        ROOT_LOGGER.setLevel(level);
+        OUR_ROOT_LOGGER.addHandler(handler);
+        OUR_ROOT_LOGGER.setLevel(level);
         
         Thread.setDefaultUncaughtExceptionHandler(new UncaughtExceptionLogger());
     }
@@ -123,8 +125,12 @@ public class LoggingSetup {
      * Removes all handlers from the root logger.
      */
     private static void removeDefaultLogging() {
-        for (Handler handler : ROOT_LOGGER.getHandlers()) {
-            ROOT_LOGGER.removeHandler(handler);
+        for (Handler handler : GLOBAL_ROOT_LOGGER.getHandlers()) {
+            GLOBAL_ROOT_LOGGER.removeHandler(handler);
+            handler.close();
+        }
+        for (Handler handler : OUR_ROOT_LOGGER.getHandlers()) {
+            OUR_ROOT_LOGGER.removeHandler(handler);
             handler.close();
         }
     }
@@ -136,7 +142,7 @@ public class LoggingSetup {
 
         @Override
         public void uncaughtException(Thread thread, Throwable exception) {
-            Logger.getGlobal().log(Level.SEVERE, "Uncaught exception in thread " + thread.getName(), exception);
+            OUR_ROOT_LOGGER.log(Level.SEVERE, "Uncaught exception in thread " + thread.getName(), exception);
         }
         
     }

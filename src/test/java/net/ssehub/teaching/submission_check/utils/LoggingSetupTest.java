@@ -40,7 +40,7 @@ import org.junit.Test;
 
 public class LoggingSetupTest {
 
-    private static final Logger ROOT_LOGGER = Logger.getLogger("");
+    private static final Logger ROOT_LOGGER = Logger.getLogger("net.ssehub.teaching.submission_check");
     
     private static final File TESTDATA = new File("src/test/resources");
     
