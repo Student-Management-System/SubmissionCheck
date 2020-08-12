@@ -129,8 +129,7 @@ public class EclipseConfigCheck extends Check {
         boolean success = true;
         
         if (requireJavaProject) {
-            if (!project.getBuilders().contains(EclipseProjectFile.BUILDER_JAVA)
-                    && !project.getNatures().contains(EclipseProjectFile.NATURE_JAVA)) {
+            if (!project.getNatures().contains(EclipseProjectFile.NATURE_JAVA)) {
                 success = false;
                 
                 ResultMessage message = new ResultMessage(CHECK_NAME, MessageType.ERROR,
@@ -142,8 +141,7 @@ public class EclipseConfigCheck extends Check {
         }
         
         if (requireCheckstyleProject) {
-            if (!project.getBuilders().contains(EclipseProjectFile.BUILDER_CHECKSTYLE)
-                    && !project.getNatures().contains(EclipseProjectFile.NATURE_CHECKSTYLE)) {
+            if (!project.getNatures().contains(EclipseProjectFile.NATURE_CHECKSTYLE)) {
                 
                 ResultMessage message = new ResultMessage(CHECK_NAME, MessageType.WARNING,
                         "Submission does not have Checkstyle enabled");
