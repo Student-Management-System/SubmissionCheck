@@ -246,7 +246,7 @@ public class SubmissionHook {
             
             queryMetadataFromSvn();
             
-            LOGGER.log(Level.INFO, "Commit author: {0}, affected submissions: {0}", new Object[] {
+            LOGGER.log(Level.INFO, "Commit author: {0}, affected submissions: {1}", new Object[] {
                     transactionInfo.getAuthor(), getModifiedSubmissions()});
             
             if (!configuration.getUnrestrictedUsers().contains(transactionInfo.getAuthor())) {

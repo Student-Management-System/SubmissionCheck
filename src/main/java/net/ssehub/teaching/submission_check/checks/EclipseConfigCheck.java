@@ -130,7 +130,7 @@ public class EclipseConfigCheck extends Check {
     private boolean checkProjectContents(EclipseProjectFile project) {
         boolean success = true;
         
-        LOGGER.log(Level.FINER, "Checking project setup");
+        LOGGER.log(Level.FINER, "Checking project setup...");
         
         if (requireJavaProject) {
             if (!project.getNatures().contains(EclipseProjectFile.NATURE_JAVA)) {
