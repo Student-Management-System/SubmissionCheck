@@ -77,7 +77,15 @@ public class LoggingSetup {
     public static final void setupStdoutLogging() {
         removeDefaultLogging();
         
-        StreamHandler handler = new StreamHandler(System.out, new SingleLineLogFormatter());
+        StreamHandler handler = new StreamHandler(System.out, new SingleLineLogFormatter()) {
+            
+            @Override
+            public synchronized void close() {
+                // only flush, so we don't close System.out
+                flush();
+            }
+            
+        };
         handler.setLevel(Level.ALL);
         try {
             handler.setEncoding("UTF-8");
@@ -97,6 +105,7 @@ public class LoggingSetup {
     private static void removeDefaultLogging() {
         for (Handler handler : ROOT_LOGGER.getHandlers()) {
             ROOT_LOGGER.removeHandler(handler);
+            handler.close();
         }
     }
     

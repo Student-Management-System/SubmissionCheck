@@ -268,6 +268,29 @@ public class SingleLineLogFormatterTest {
         assertThat(lines.size(), is(8));
     }
     
+    @Test
+    public void exceptionFollowedByMessage() {
+        IOException exception = new IOException("exception message");
+        StackTraceElement[] stackTrace = {
+                new StackTraceElement("some.class.Name", "someMethod", "Name.java", 124),
+                new StackTraceElement("some.other.ClassName", "main", "Main.java", 52),
+        };
+        exception.setStackTrace(stackTrace);
+        
+        testLogger.log(Level.WARNING, "An exception", exception);
+        testLogger.log(Level.INFO, "Some other message");
+        
+        List<String> lines = getLogLines();
+        
+        assertLine(lines.get(0), " [WARNING] [SingleLineLogFormatterTest.exceptionFollowedByMessage] An exception");
+        assertThat(lines.get(1), is(" ".repeat(21 + 67) + "java.io.IOException: exception message"));
+        assertThat(lines.get(2), is(" ".repeat(21 + 67) + "  at some.class.Name.someMethod(Name.java:124)"));
+        assertThat(lines.get(3), is(" ".repeat(21 + 67) + "  at some.other.ClassName.main(Main.java:52)"));
+        assertLine(lines.get(4), " [INFO] [SingleLineLogFormatterTest.exceptionFollowedByMessage] Some other message");
+        
+        assertThat(lines.size(), is(5));
+    }
+    
     private void assertLine(String actual, String expectedContentWithoutDate) {
         assertThat("Start of string should match date format (got: " + actual.substring(0, 20) + ")",
                 actual.substring(0, 21).matches("\\[[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}\\]"), is(true));
