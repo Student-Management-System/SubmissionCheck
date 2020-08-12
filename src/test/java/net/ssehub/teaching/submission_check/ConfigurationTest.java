@@ -119,6 +119,18 @@ public class ConfigurationTest {
     }
     
     @Test
+    public void umlautsInFileUTF8() throws IOException {
+        File configFile = new File(TESTDATA, "umlauts.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        assertThat("Postcondition: should return correct value containing umlaut",
+                config.getProperty("somekey", new Submission("Exercise01", "")), is("täst"));
+    }
+    
+    @Test
     public void unrestrictedUsersNotConfigured() throws IOException {
         File configFile = new File(TESTDATA, "empty.properties");
         assertThat("Precondition: test file should exist",
