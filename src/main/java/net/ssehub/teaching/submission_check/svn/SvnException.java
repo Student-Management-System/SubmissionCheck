@@ -16,7 +16,7 @@
 package net.ssehub.teaching.submission_check.svn;
 
 /**
- * An exception signalling some failure in the interaction with SVN.
+ * An exception signaling some failure in the interaction with SVN.
  * 
  * @author Adam
  */

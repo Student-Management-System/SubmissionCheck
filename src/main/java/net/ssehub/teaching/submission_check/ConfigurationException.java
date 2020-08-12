@@ -16,7 +16,7 @@
 package net.ssehub.teaching.submission_check;
 
 /**
- * An exception signalling an invalid configuration, e.g. an invalid or missing value.
+ * An exception signaling an invalid configuration, e.g. an invalid or missing value.
  *   
  * @author Adam
  */

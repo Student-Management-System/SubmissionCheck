@@ -60,7 +60,7 @@ public class Submission {
     }
     
     /**
-     * Returns the path inside the repository where this particular submussion is stored.
+     * Returns the path inside the repository where this particular submission is stored.
      * 
      * @return The path relative to the repository root.
      */

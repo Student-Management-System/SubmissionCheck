@@ -143,7 +143,7 @@ public class CliSvnInterface implements ISvnInterface {
     /**
      * Reads the error output stream of the given process and logs it to the {@link #LOGGER} if it's not empty.
      * 
-     * @param process The process to caputre the error output from.
+     * @param process The process to capture the error output from.
      */
     private void captureAndLogStderr(Process process) {
         new Thread(() -> {

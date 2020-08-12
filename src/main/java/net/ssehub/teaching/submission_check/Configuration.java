@@ -65,7 +65,7 @@ public class Configuration {
     }
     
     /**
-     * Initialises the {@link #unrestrictedUsers} set based on {@link #properties}.
+     * Initializes the {@link #unrestrictedUsers} set based on {@link #properties}.
      */
     private void initalizeUnrestrictedUsers() {
         this.unrestrictedUsers = new HashSet<>();

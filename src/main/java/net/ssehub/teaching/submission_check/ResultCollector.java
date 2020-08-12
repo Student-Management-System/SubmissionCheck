@@ -41,7 +41,7 @@ import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 
 /**
  * Collects all {@link ResultMessage}s and status of {@link Check}s during an execution. After the collection phase,
- * the messages are serialised and sent to the client.
+ * the messages are serialized to be sent to the client.
  * 
  * @author Adam
  */
@@ -94,7 +94,7 @@ public class ResultCollector {
     /**
      * Returns whether all previous check results are successful.
      * 
-     * @return Whether all previous check results are succesful.
+     * @return Whether all previous check results are successful.
      * 
      * @see #addCheckResult(boolean)
      */
@@ -209,9 +209,9 @@ public class ResultCollector {
     }
     
     /**
-     * Serialises all collected messages as a string that can be sent to the client.
+     * Serializes all collected messages as a string that can be sent to the client.
      * 
-     * @return The collected messages in serialised form.
+     * @return The collected messages in serialized form.
      */
     public String serializeMessages() {
         String result;

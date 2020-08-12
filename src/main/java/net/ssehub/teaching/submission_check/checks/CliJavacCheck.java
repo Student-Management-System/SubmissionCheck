@@ -116,7 +116,7 @@ public class CliJavacCheck extends JavacCheck {
     
     /**
      * Creates the full command for running the Java compiler on the given source files. Includes all settings
-     * (e.g. Java verison and file encoding). The command is expected to run with the given directory as the working
+     * (e.g. Java version and file encoding). The command is expected to run with the given directory as the working
      * directory.
      * 
      * @param submissionDirectory The submission directory that contains all the Java file.

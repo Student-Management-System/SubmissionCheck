@@ -98,7 +98,7 @@ public class InternalJavacCheck extends JavacCheck {
     /**
      * Builds the options to pass to the compiler.
      * 
-     * @return A list of optoins.
+     * @return A list of options.
      */
     private List<String> buildOptions() {
         List<String> options = new LinkedList<>();

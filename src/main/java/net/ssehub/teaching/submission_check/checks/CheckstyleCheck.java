@@ -38,7 +38,7 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Runs checkstyle on all Java source files.
+ * Runs Checkstyle on all Java source files.
  * 
  * @author Adam
  */
@@ -55,7 +55,7 @@ public class CheckstyleCheck extends Check {
     /**
      * Creates a re-usable {@link CheckstyleCheck}.
      * 
-     * @param checkstyleRules A file with the XML ruleset for checkstyle.
+     * @param checkstyleRules A file with the XML ruleset for Checkstyle.
      */
     public CheckstyleCheck(File checkstyleRules) {
         this.checkstyleRules = checkstyleRules;
@@ -63,7 +63,7 @@ public class CheckstyleCheck extends Check {
     }
 
     /**
-     * Sets the charset (encoding) that checkstyle should use to parse the files. By default, this is
+     * Sets the charset (encoding) that Checkstyle should use to parse the files. By default, this is
      * {@link StandardCharsets#UTF_8}.
      * 
      * @param charset The charset to use.
@@ -73,9 +73,9 @@ public class CheckstyleCheck extends Check {
     }
     
     /**
-     * Returns the checkstyle rules file that is configured for this check.
+     * Returns the Checkstyle rules file that is configured for this check.
      * 
-     * @return The configured checkstyle rules file.
+     * @return The configured Checkstyle rules file.
      */
     public File getCheckstyleRules() {
         return checkstyleRules;
@@ -150,7 +150,7 @@ public class CheckstyleCheck extends Check {
     }
     
     /**
-     * A listener that processes the audit events that checkstyle produces.
+     * A listener that processes the audit events that Checkstyle produces.
      */
     private class CheckstyleOutputListener implements AuditListener {
 
