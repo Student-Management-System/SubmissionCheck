@@ -22,6 +22,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.util.HashSet;
@@ -197,7 +198,7 @@ public class FileUtils {
     }
     
     /**
-     * Creates a {@link Reader} to read the contents of the given file. Uses the default charset. This should
+     * Creates a {@link Reader} to read the contents of the given file. Uses UTF-8 as the charset. This should
      * be preferred over directly creating a {@link FileReader} as this method allows test cases to force
      * {@link IOException}s for testing purposes.
      * 
@@ -205,13 +206,13 @@ public class FileUtils {
      * 
      * @return An {@link Reader} for the file's content.
      * 
-     * @throws FileNotFoundException If the file does not exist, is a directory rather than a regular file, or for 
+     * @throws IOException If the file does not exist, is a directory rather than a regular file, or for 
      *         some other reason cannot be opened for reading.
      */
-    public static Reader newReader(File file) throws FileNotFoundException {
+    public static Reader newReader(File file) throws IOException {
         Reader result;
         if (!fileOperationsShouldFail) {
-            result = new FileReader(file);
+            result = new FileReader(file, StandardCharsets.UTF_8);
         } else {
             result = new Reader() {
                 
