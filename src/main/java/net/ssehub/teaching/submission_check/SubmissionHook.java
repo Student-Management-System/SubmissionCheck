@@ -259,7 +259,8 @@ public class SubmissionHook {
             resultCollector.addCheckResult(false);
             resultCollector.addMessage(new ResultMessage("hook", MessageType.ERROR, "An internal error occurred"));
         }
-        
+
+        LOGGER.log(Level.INFO, "Result messages: " + resultCollector.getMessages());
         System.err.println(resultCollector.serializeMessages());
         return resultCollector.getExitCode(phase);
     }
@@ -278,6 +279,7 @@ public class SubmissionHook {
         LoggingSetup.setupFileLogging(new File("submission-check.log"));
         SubmissionHook hook = new SubmissionHook(args, new CliSvnInterface());
         int exitCode = hook.execute(new File("config.properties"));
+        LOGGER.log(Level.INFO, "Exiting with exit code " + exitCode);
         System.exit(exitCode);
     }
     
