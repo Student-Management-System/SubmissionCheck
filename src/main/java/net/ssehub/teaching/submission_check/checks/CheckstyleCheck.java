@@ -21,6 +21,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +45,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
 public class CheckstyleCheck extends Check {
     
     public static final String CHECK_NAME = "checkstyle";
+    
+    private static final Logger LOGGER = Logger.getLogger(CheckstyleCheck.class.getName());
     
     private File checkstyleRules;
 
@@ -135,6 +139,8 @@ public class CheckstyleCheck extends Check {
             success = listener.getNumErrors() == 0;
             
         } catch (CheckstyleException | UnsupportedEncodingException e) {
+            LOGGER.log(Level.WARNING, "Exception while running checkstyle", e);
+            
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "An internal error occurred while running checkstyle"));
             success = false;

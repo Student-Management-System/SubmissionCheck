@@ -20,8 +20,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
 
 import java.io.File;
-import java.io.IOException;
-import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
@@ -30,6 +28,7 @@ import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
+import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class CheckstyleCheckTest {
 
@@ -336,18 +335,6 @@ public class CheckstyleCheckTest {
     }
     
     @BeforeClass
-    public static void checkJavacInstallation() throws InterruptedException, IOException {
-        ProcessBuilder command = new ProcessBuilder("java", "-version");
-        command.redirectError(Redirect.DISCARD);
-        command.redirectOutput(Redirect.DISCARD);
-        
-        int exitStatus = command.start().waitFor();
-        
-        assertThat("Precondition: java command doesn't execute",
-                exitStatus, is(0));
-    }
-    
-    @BeforeClass
     public static void checkRulesExist() {
         assertThat("Precondition: checkstyle beginners rule file should exist (" + BEGINNERS_RULES + ")",
                 BEGINNERS_RULES.isFile());
@@ -372,6 +359,11 @@ public class CheckstyleCheckTest {
         
         assertThat("Precondition: checkstyle invalid rule file should exist (" + INVALID_RULES + ")",
                 INVALID_RULES.isFile());
+    }
+    
+    @BeforeClass
+    public static void initLogger() {
+        LoggingSetup.setupStdoutLogging();
     }
     
 }

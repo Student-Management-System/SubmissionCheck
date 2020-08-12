@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
+import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class FileSizeCheckTest {
     
@@ -198,6 +199,11 @@ public class FileSizeCheckTest {
                 Assert.fail("Setup: Could not create empty test directory " + directory.getPath());
             }
         }
+    }
+    
+    @BeforeClass
+    public static void initLogger() {
+        LoggingSetup.setupStdoutLogging();
     }
     
 }

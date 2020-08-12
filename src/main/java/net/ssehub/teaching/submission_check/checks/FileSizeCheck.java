@@ -17,6 +17,8 @@ package net.ssehub.teaching.submission_check.checks;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -30,6 +32,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
 public class FileSizeCheck extends Check {
     
     public static final String CHECK_NAME = "file-size";
+    
+    private static final Logger LOGGER = Logger.getLogger(FileSizeCheck.class.getName());
     
     private long maxFileSize;
     
@@ -106,6 +110,8 @@ public class FileSizeCheck extends Check {
                 
             }
         } catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Exception while checking file-size", e);
+            
             numErrors++;
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "An internal error occurred while checking file-sizes"));

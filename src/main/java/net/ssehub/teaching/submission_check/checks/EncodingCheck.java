@@ -24,6 +24,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -37,6 +39,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
 public class EncodingCheck extends Check {
     
     public static final String CHECK_NAME = "encoding";
+    
+    private static final Logger LOGGER = Logger.getLogger(EncodingCheck.class.getName());
     
     private Charset wantedCharset;
     
@@ -78,6 +82,8 @@ public class EncodingCheck extends Check {
             }
             
         }  catch (IOException e) {
+            LOGGER.log(Level.WARNING, "Exception while checking encoding", e);
+            
             success = false;
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "An internal error occurred while checking file encoding"));

@@ -20,10 +20,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 
 import java.util.Arrays;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
+import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class CliJavacCheckTest extends JavacCheckTest {
 
@@ -59,6 +61,11 @@ public class CliJavacCheckTest extends JavacCheckTest {
         check.setJavacCommand("/opt/some/javac");
         
         assertThat("should have explicitly set value", check.getJavacCommand(), is("/opt/some/javac"));
+    }
+    
+    @BeforeClass
+    public static void initLogger() {
+        LoggingSetup.setupStdoutLogging();
     }
     
 }

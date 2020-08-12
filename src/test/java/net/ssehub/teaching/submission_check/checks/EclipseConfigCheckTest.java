@@ -22,11 +22,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtilsTest;
+import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class EclipseConfigCheckTest {
 
@@ -241,6 +243,11 @@ public class EclipseConfigCheckTest {
         check.setRequireCheckstyleProject(true);
         assertThat(check.getRequireJavaProject(), is(false));
         assertThat(check.getRequireCheckstyleProject(), is(true));
+    }
+    
+    @BeforeClass
+    public static void initLogger() {
+        LoggingSetup.setupStdoutLogging();
     }
     
 }

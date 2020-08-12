@@ -19,6 +19,8 @@ import static org.junit.Assume.assumeTrue;
 
 import org.junit.BeforeClass;
 
+import net.ssehub.teaching.submission_check.utils.LoggingSetup;
+
 public class InternalJavacCheckTest extends JavacCheckTest {
 
     @BeforeClass
@@ -29,6 +31,11 @@ public class InternalJavacCheckTest extends JavacCheckTest {
     @Override
     protected JavacCheck creatInstance() {
         return new InternalJavacCheck();
+    }
+    
+    @BeforeClass
+    public static void initLogger() {
+        LoggingSetup.setupStdoutLogging();
     }
 
 }

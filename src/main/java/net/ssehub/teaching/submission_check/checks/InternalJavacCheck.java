@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.tools.Diagnostic;
 import javax.tools.DiagnosticCollector;
@@ -41,6 +43,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
  * @author Adam
  */
 public class InternalJavacCheck extends JavacCheck {
+    
+    private static final Logger LOGGER = Logger.getLogger(InternalJavacCheck.class.getName());
 
     /**
      * Checks whether the internal compiler is supported by this runtime.
@@ -77,6 +81,8 @@ public class InternalJavacCheck extends JavacCheck {
             success = task.call();
             
         } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, "Exception while setting up compilaton task", e);
+            
             success = false;
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "An internal error occurred while running javac"));

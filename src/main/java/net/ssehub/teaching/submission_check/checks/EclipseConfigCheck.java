@@ -17,6 +17,8 @@ package net.ssehub.teaching.submission_check.checks;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -32,6 +34,8 @@ import net.ssehub.teaching.submission_check.eclipse_config.InvalidEclipseConfigE
 public class EclipseConfigCheck extends Check {
     
     public static final String CHECK_NAME = "eclipse-configuration";
+    
+    private static final Logger LOGGER = Logger.getLogger(EclipseConfigCheck.class.getName());
 
     private boolean requireJavaProject;
     
@@ -103,6 +107,8 @@ public class EclipseConfigCheck extends Check {
                         "Does not contain a valid eclipse project"));
                 
             } catch (IOException e) {
+                LOGGER.log(Level.WARNING, "Exception while parsing eclipse configuration", e);
+                
                 success = false;
                 addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                         "An internal error occurred while checking eclipse project"));

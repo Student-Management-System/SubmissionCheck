@@ -24,6 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +40,8 @@ import net.ssehub.teaching.submission_check.utils.FileUtils;
  */
 public class CliJavacCheck extends JavacCheck {
 
+    private static final Logger LOGGER = Logger.getLogger(CliJavacCheck.class.getName());
+    
     private static final Pattern JAVAC_OUTPUT_PATTERN = Pattern.compile(
             "^(?<filename>.+):(?<line>\\d+): (?<type>error|warning): (?<message>.+)$");
 
@@ -100,6 +104,8 @@ public class CliJavacCheck extends JavacCheck {
             }
             
         } catch (IOException | InterruptedException e) {
+            LOGGER.log(Level.WARNING, "Exception while running javac", e);
+            
             success = false;
             addResultMessage(new ResultMessage(CHECK_NAME, MessageType.ERROR,
                     "An internal error occurred while running javac"));
