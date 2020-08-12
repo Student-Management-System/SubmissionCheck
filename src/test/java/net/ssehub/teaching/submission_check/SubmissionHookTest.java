@@ -40,41 +40,41 @@ public class SubmissionHookTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void tooFewArguments() {
-        new SubmissionHook(new String[] {"a", "b"}, new ResultCollector(), new MockSvnInterface());
+        new SubmissionHook(new String[] {"a", "b"}, new MockSvnInterface());
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void tooManyArguments() {
-        new SubmissionHook(new String[] {"a", "b", "c", "d"}, new ResultCollector(), new MockSvnInterface());
+        new SubmissionHook(new String[] {"a", "b", "c", "d"}, new MockSvnInterface());
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void invalidPhase() {
-        new SubmissionHook(new String[] {"invalid", TESTDATA.getAbsolutePath(), "42"}, new ResultCollector(), new MockSvnInterface());
+        new SubmissionHook(new String[] {"invalid", TESTDATA.getAbsolutePath(), "42"}, new MockSvnInterface());
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void nonExistingRepository() {
-        new SubmissionHook(new String[] {"PRE", new File(TESTDATA, "doesnt_exist").getAbsolutePath(), "42"}, new ResultCollector(), new MockSvnInterface());
+        new SubmissionHook(new String[] {"PRE", new File(TESTDATA, "doesnt_exist").getAbsolutePath(), "42"}, new MockSvnInterface());
     }
     
     @Test
     public void phasePre() {
-        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42"}, new ResultCollector(), new MockSvnInterface());
+        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42"}, new MockSvnInterface());
         
         assertThat(hook.getPhase(), is(Phase.PRE_COMMIT));
     }
     
     @Test
     public void phasePost() {
-        SubmissionHook hook = new SubmissionHook(new String[] {"POST", TESTDATA.getAbsolutePath(), "42"}, new ResultCollector(), new MockSvnInterface());
+        SubmissionHook hook = new SubmissionHook(new String[] {"POST", TESTDATA.getAbsolutePath(), "42"}, new MockSvnInterface());
         
         assertThat(hook.getPhase(), is(Phase.POST_COMMIT));
     }
     
     @Test
     public void constructorAttributesSet() {
-        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42-c"}, new ResultCollector(), new MockSvnInterface());
+        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42-c"}, new MockSvnInterface());
         
         assertThat(hook.getPhase(), is(Phase.PRE_COMMIT));
         assertThat(hook.getRepositoryPath(), is(TESTDATA.getAbsoluteFile()));
@@ -93,7 +93,7 @@ public class SubmissionHookTest {
         svnInterface.setModifiedSubmissions(new HashSet<>(Arrays.asList(
                 new Submission("Homework01", "Group05"), new Submission("Homework17", "Group08"))));
         
-        SubmissionHook hook = new SubmissionHook(new String[] {"POST", TESTDATA.getAbsolutePath(), "42-c"}, new ResultCollector(), svnInterface);
+        SubmissionHook hook = new SubmissionHook(new String[] {"POST", TESTDATA.getAbsolutePath(), "42-c"}, svnInterface);
         
         hook.queryMetadataFromSvn();
         
@@ -110,7 +110,7 @@ public class SubmissionHookTest {
         assertThat("Precondition: test config file exists",
                 configFile.isFile(), is(true));
         
-        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42-c"}, new ResultCollector(), new MockSvnInterface());
+        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42-c"}, new MockSvnInterface());
         
         assertThat("Precondition: configuration is not initialized",
                 hook.getConfiguration(), is(nullValue()));

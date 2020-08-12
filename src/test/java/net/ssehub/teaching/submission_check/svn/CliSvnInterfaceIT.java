@@ -62,7 +62,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void postCommitAuthor() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repoWithTwoCommits.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repoWithTwoCommits.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -84,7 +84,7 @@ public class CliSvnInterfaceIT {
     
     @Test(expected = SvnException.class)
     public void postInvalidRevision() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repoWithTwoCommits.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repoWithTwoCommits.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -93,7 +93,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void preCommitAuthor() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -111,7 +111,7 @@ public class CliSvnInterfaceIT {
     
     @Test(expected = SvnException.class)
     public void preInvalidTransaction() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -120,7 +120,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void postModifiedSubmissions() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -149,7 +149,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void preModifiedSubmissions() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2GroupsInTransaction_4-4.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repo2Exercises2GroupsInTransaction_4-4.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -162,7 +162,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void postCheckoutSubmission() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -192,7 +192,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void postCheckoutOneSubmissionFromMultipleCommitted() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -222,7 +222,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void postCheckoutSubmissionWithMultipleFilesAndFolders() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repo2Exercises2Groups.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -284,7 +284,7 @@ public class CliSvnInterfaceIT {
     
     @Test
     public void preCheckoutSubmissionWithMultipleFilesAndFolders() throws IOException, SvnException {
-        File repo = prepareSvnRepo(new File(TESTDATA, "repo2Exercises2GroupsInTransaction_4-4.zip"));
+        File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repo2Exercises2GroupsInTransaction_4-4.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
@@ -344,7 +344,7 @@ public class CliSvnInterfaceIT {
                 FileUtils.getFileSize(libraryFile), is(946L));
     }
     
-    private File prepareSvnRepo(File repoZip) throws IOException {
+    public static File prepareTestdataSvnRepo(File repoZip) throws IOException {
         assertThat("Precondition: test SVN repo zip file should exist",
                 repoZip.isFile(), is(true));
         

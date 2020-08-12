@@ -58,20 +58,24 @@ public class SubmissionHook {
     
     private CheckRunner checkRunner;
     
+    private ResultCollector resultCollector;
+    
     /**
      * Creates a new {@link SubmissionHook} instance.
      * 
      * @param args Command line arguments. Expected:
      *      <ul>
-     *          <li>[0]: Either "PRE" or "POST" signalling the phase of this hook</li>
+     *          <li>[0]: Either "PRE" or "POST" signaling the phase of this hook</li>
      *          <li>[1]: The path of the SVN repository</li>
      *          <li>[2]: The transaction identifier (revision number if phase is "POST"</li>
      *      </ul>
-     * @param resultCollector The {@link ResultCollector} to add {@link Check} results to.
      * @param svnInterface The {@link ISvnInterface} that should be used for SVN operations.
      */
-    public SubmissionHook(String[] args, ResultCollector resultCollector, ISvnInterface svnInterface)
+    public SubmissionHook(String[] args, ISvnInterface svnInterface)
             throws IllegalArgumentException {
+        
+        LOGGER.log(Level.INFO, "Hook called with arguments " + Arrays.toString(args));
+        
         if (args.length != 3) {
             throw new IllegalArgumentException("Expected exactly 3 arguments, got " + args.length);
         }
@@ -96,6 +100,7 @@ public class SubmissionHook {
         
         this.transactionId = args[2];
         
+        this.resultCollector = new ResultCollector();
         this.checkRunner = new CheckRunner(resultCollector);
         this.svnInterface = svnInterface;
     }
@@ -125,6 +130,15 @@ public class SubmissionHook {
      */
     public String getTransactionId() {
         return transactionId;
+    }
+    
+    /**
+     * Returns the {@link ResultCollector} used by this hook.
+     * 
+     * @return The {@link ResultCollector}.
+     */
+    public ResultCollector getResultCollector() {
+        return resultCollector;
     }
     
     /**
@@ -216,38 +230,27 @@ public class SubmissionHook {
     }
     
     /**
-     * The main method called by the hook mechanism of SVN.
+     * Runs the complete hook process.
      * 
-     * @param args Command line arguments. Expected:
-     *      <ul>
-     *          <li>[0]: Either "PRE" or "POST" signalling the phase of this hook</li>
-     *          <li>[1]: The path of the SVN repository</li>
-     *          <li>[2]: The transaction identifier (revision number if phase is "POST"</li>
-     *      </ul>
+     * @param configurationFile The {@link Configuration} file to read.
+     * 
+     * @return The exit code that this process should exit with.
      */
-    public static void main(String[] args) {
-        LoggingSetup.setupFileLogging(new File("submission-check.log"));
-        
-        LOGGER.log(Level.INFO, "Hook called with arguments " + Arrays.toString(args));
-        
-        ResultCollector resultCollector = new ResultCollector();
-        SubmissionHook hook = new SubmissionHook(args, resultCollector, new CliSvnInterface());
-        
+    public int execute(File configurationFile) {
         try {
-            hook.readConfiguration(new File("config.properties"));
+            readConfiguration(configurationFile);
             
-            hook.queryMetadataFromSvn();
+            queryMetadataFromSvn();
             
-            TransactionInfo info = hook.getTransactionInfo();
             LOGGER.log(Level.INFO, "TransactionInfo:"
-                    + " author: " + info.getAuthor()
-                    + " affected submissions: " + hook.getModifiedSubmissions());
+                    + " author: " + transactionInfo.getAuthor()
+                    + " affected submissions: " + getModifiedSubmissions());
             
-            if (!hook.configuration.getUnrestrictedUsers().contains(info.getAuthor())) {
-                hook.runChecksOnAllModifiedSubmissions();
+            if (!configuration.getUnrestrictedUsers().contains(transactionInfo.getAuthor())) {
+                runChecksOnAllModifiedSubmissions();
                 
             } else {
-                LOGGER.log(Level.INFO, info.getAuthor() + " is an unrestrited user, skipping all checks");
+                LOGGER.log(Level.INFO, transactionInfo.getAuthor() + " is an unrestrited user, skipping all checks");
             }
             
         } catch (SvnException | IOException | ConfigurationException e) {
@@ -258,7 +261,24 @@ public class SubmissionHook {
         }
         
         System.err.println(resultCollector.serializeMessages());
-        System.exit(resultCollector.getExitCode(hook.phase));
+        return resultCollector.getExitCode(phase);
+    }
+    
+    /**
+     * The main method called by the hook mechanism of SVN.
+     * 
+     * @param args Command line arguments. Expected:
+     *      <ul>
+     *          <li>[0]: Either "PRE" or "POST" signaling the phase of this hook</li>
+     *          <li>[1]: The path of the SVN repository</li>
+     *          <li>[2]: The transaction identifier (revision number if phase is "POST"</li>
+     *      </ul>
+     */
+    public static void main(String[] args) {
+        LoggingSetup.setupFileLogging(new File("submission-check.log"));
+        SubmissionHook hook = new SubmissionHook(args, new CliSvnInterface());
+        int exitCode = hook.execute(new File("config.properties"));
+        System.exit(exitCode);
     }
     
 }
