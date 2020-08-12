@@ -17,6 +17,12 @@ Note that many messages are created dynamically from the tool output (e.g. compi
 			<td>error</td>
 			<td>An exception occurred while running the hook; the exception is printed to the log file.</td>
 		</tr>
+        <tr>
+            <td><code>hook</code></td>
+            <td><code>Internal error: failed to create XML message</code></td>
+            <td>error</td>
+            <td>An exception occurred while converting the result messages to XML; the exception is printed to the log file.</td>
+        </tr>
 		<tr>
 			<td><code>file-size</code></td>
 			<td><code>File is too large</code></td>

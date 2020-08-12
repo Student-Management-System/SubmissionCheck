@@ -229,7 +229,8 @@ public class ResultCollector {
         } catch (DOMException | TransformerException | ParserConfigurationException e) {
             LOGGER.log(Level.SEVERE, "Failed to create XML for result message", e);
             result = "<submitResults>\n"
-                    + "    <message type=\"error\" message=\"Internal error: failed to create XML message\"/>\n"
+                    + "    <message tool=\"hook\" type=\"error\" "
+                            + "message=\"Internal error: failed to create XML message\"/>\n"
                     + "</submitResults>\n";
         }
         
