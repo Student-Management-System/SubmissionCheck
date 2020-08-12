@@ -81,11 +81,11 @@ public class FileUtils {
      */
     private static void findeFilesBySuffixImpl(File directory, String suffix, Set<File> result) {
         for (File nested : directory.listFiles()) {
-            if (nested.isFile() && nested.getName().endsWith(suffix)) {
-                result.add(nested);
-                
-            } else if (nested.isDirectory()) {
+            if (nested.isDirectory()) {
                 findeFilesBySuffixImpl(nested, suffix, result);
+                
+            } else if (nested.getName().endsWith(suffix)) {
+                result.add(nested);
             }
         }
     }
@@ -111,11 +111,11 @@ public class FileUtils {
      */
     public static void findAllFilesImpl(File directory, Set<File> result) {
         for (File nested : directory.listFiles()) {
-            if (nested.isFile()) {
-                result.add(nested);
-                
-            } else if (nested.isDirectory()) {
+            if (nested.isDirectory()) {
                 findAllFilesImpl(nested, result);
+                
+            } else {
+                result.add(nested);
             }
         }
     }
