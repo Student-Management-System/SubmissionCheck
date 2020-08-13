@@ -216,14 +216,20 @@ public class Configuration {
      * Creates an {@link EclipseConfigCheck} with the parameters as configured by the user.
      * 
      * @param submission The submission that this check is for.
+     * @param onlyBasic Whether only a basic check for the existence of an eclipse project configuration should be done.
+     *      If <code>false</code>, further checks (e.g. if the project is a Java project) are done, too.
      * 
      * @return The configured {@link EclipseConfigCheck}.
      */
-    public EclipseConfigCheck createEclipseConfigCheck(Submission submission) {
+    public EclipseConfigCheck createEclipseConfigCheck(Submission submission, boolean onlyBasic) {
         EclipseConfigCheck check = new EclipseConfigCheck();
         
-        check.setRequireJavaProject(Boolean.valueOf(getProperty("eclipseConfig.requireJava", submission)));
-        check.setRequireCheckstyleProject(Boolean.valueOf(getProperty("eclipseConfig.requireCheckstyle", submission)));
+        if (!onlyBasic) {
+            check.setRequireJavaProject(
+                    Boolean.valueOf(getProperty("eclipseConfig.requireJava", submission)));
+            check.setRequireCheckstyleProject(
+                    Boolean.valueOf(getProperty("eclipseConfig.requireCheckstyle", submission)));
+        }
         
         return check;
     }
@@ -332,11 +338,11 @@ public class Configuration {
         case PRE_COMMIT:
             checks.add(createFileSizeCheck(submission));
             checks.add(createEncodingCheck(submission));
-            checks.add(createEclipseConfigCheck(submission));
+            checks.add(createEclipseConfigCheck(submission, true));
             break;
             
         case POST_COMMIT:
-            checks.add(createEclipseConfigCheck(submission));
+            checks.add(createEclipseConfigCheck(submission, false));
             checks.add(createJavacCheck(submission, InternalJavacCheck.isSupported()));
             checks.add(createCheckstyleCheck(submission));
             break;

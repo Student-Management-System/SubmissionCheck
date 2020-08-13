@@ -313,14 +313,14 @@ public class ConfigurationTest {
     }
     
     @Test
-    public void eclipseConfigCheckDefaults() throws IOException, ConfigurationException {
+    public void eclipseConfigCheckFullDefaults() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "empty.properties");
         assertThat("Precondition: test file should exist",
                 configFile.isFile(), is(true));
         
         Configuration config = new Configuration(configFile);
         
-        EclipseConfigCheck check = config.createEclipseConfigCheck(new Submission("Exercise01", ""));
+        EclipseConfigCheck check = config.createEclipseConfigCheck(new Submission("Exercise01", ""), false);
         
         assertThat("Postcondition: missing setting should return default value",
                 check.getRequireJavaProject(), is(false));
@@ -329,18 +329,34 @@ public class ConfigurationTest {
     }
     
     @Test
-    public void eclipseConfigCheck() throws IOException, ConfigurationException {
+    public void eclipseConfigCheckFull() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "eclipseConfig.properties");
         assertThat("Precondition: test file should exist",
                 configFile.isFile(), is(true));
         
         Configuration config = new Configuration(configFile);
         
-        EclipseConfigCheck check = config.createEclipseConfigCheck(new Submission("Exercise01", ""));
+        EclipseConfigCheck check = config.createEclipseConfigCheck(new Submission("Exercise01", ""), false);
         
         assertThat("Postcondition: should return configured value",
                 check.getRequireJavaProject(), is(true));
         assertThat("Postcondition: should return configured value",
+                check.getRequireCheckstyleProject(), is(true));
+    }
+    
+    @Test
+    public void eclipseConfigCheckMinimal() throws IOException, ConfigurationException {
+        File configFile = new File(TESTDATA, "eclipseConfig.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        EclipseConfigCheck check = config.createEclipseConfigCheck(new Submission("Exercise01", ""), true);
+        
+        assertThat("Postcondition: should not have configured value set",
+                check.getRequireJavaProject(), is(false));
+        assertThat("Postcondition: should not have configured value set",
                 check.getRequireCheckstyleProject(), is(false));
     }
     
@@ -483,7 +499,7 @@ public class ConfigurationTest {
     
     @Test
     public void createChecksForPreCommit() throws IOException, ConfigurationException {
-        File configFile = new File(TESTDATA, "minimal.properties");
+        File configFile = new File(TESTDATA, "allChecks.properties");
         assertThat("Precondition: test file should exist",
                 configFile.isFile(), is(true));
         
@@ -495,11 +511,14 @@ public class ConfigurationTest {
         assertThat(checks.get(1), instanceOf(EncodingCheck.class));
         assertThat(checks.get(2), instanceOf(EclipseConfigCheck.class));
         assertThat(checks.size(), is(3));
+        
+        assertThat("Postcondition: EclipseConfigCheck should have no further settings set",
+                ((EclipseConfigCheck) checks.get(2)).getRequireJavaProject(), is(false));
     }
     
     @Test
     public void createChecksForPostCommit() throws IOException, ConfigurationException {
-        File configFile = new File(TESTDATA, "minimal.properties");
+        File configFile = new File(TESTDATA, "allChecks.properties");
         assertThat("Precondition: test file should exist",
                 configFile.isFile(), is(true));
         
@@ -511,6 +530,9 @@ public class ConfigurationTest {
         assertThat(checks.get(1), instanceOf(JavacCheck.class));
         assertThat(checks.get(2), instanceOf(CheckstyleCheck.class));
         assertThat(checks.size(), is(3));
+        
+        assertThat("Postcondition: EclipseConfigCheck should have further settings set",
+                ((EclipseConfigCheck) checks.get(0)).getRequireJavaProject(), is(true));
     }
     
     @BeforeClass
