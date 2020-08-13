@@ -299,7 +299,7 @@ public class FileUtils {
      * 
      * @throws IOException If creating the temporary folder fails.
      * 
-     * @see {@link Runtime#addShutdownHook(Thread)}
+     * @see Runtime#addShutdownHook(Thread)
      */
     public static File createTemporaryDirectory() throws IOException {
         if (!shutdownHookRegistered) {
