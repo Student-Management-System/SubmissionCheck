@@ -20,7 +20,7 @@ error messages to the submitter but still accept the submission.
 | `encoding`              | yes       | Checks that all text-files in the submission have the correct encoding. |
 | `eclipse-configuration` | yes/no    | Checks that the submission is a valid eclipse configuration.            |
 | `javac`                 | no        | Checks that the submitted Java source files compile.                    |
-| `checkstyle`            | no        | Checks that the submitted Java source files have the correct format     |
+| `checkstyle`            | no        | Checks that the submitted Java source files have correct formatting.    |
 
 **Notes**
 * "Rejecting yes" means that the submission is rejected if the check fails,
@@ -39,7 +39,7 @@ SVN-repository. The script will check that everything is set-up properly.
 
 Example usage:
 ```
-./install.sh submission-hook-*.jar /path/to/repository
+./install.sh /path/to/repository
 ```
 
 Next, create a configuration file `config.properties` inside the
@@ -69,19 +69,19 @@ For example, this may look like this:
 root
 ├── Homework01Task01
 │   ├── Group01
-│   │   └── (task-content...)
+│   │   └── (submitted content...)
 │   └── Group02
-│       └── (task-content...)
+│       └── (submitted content...)
 └── Homework01Task02
     ├── Group01
-    │   └── (task-content...)
+    │   └── (submitted content...)
     └── Group02
-        └── (task-content...)
+        └── (submitted content...)
 ```
 
 When something is committed to the SVN-repository, this hook checks which
 submissions (combination of *exercise* and *group*) are modified. For
-each modified submissions, the checks are run. Typically one commit will only
+each modified submission, the checks are run. Typically one commit will only
 modify one submission (i.e. a group updates its submission).
 
 **Note:** This hook does not handle permission management.
