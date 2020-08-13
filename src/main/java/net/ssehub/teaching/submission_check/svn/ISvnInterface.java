@@ -23,7 +23,9 @@ import net.ssehub.teaching.submission_check.Submission;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 
 /**
- * Interface for implementations that communicate with SVN.
+ * Interface for implementations that communicate with the SVN server. The methods represent the operations on the
+ * SVN server that are required for the submission hook to run. Implementations should be state-less between calls to
+ * methods defined here.
  * 
  * @author Adam
  */

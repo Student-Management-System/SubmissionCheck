@@ -38,7 +38,8 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * A {@link JavacCheck} that uses the internal {@link JavaCompiler} interface.
+ * A {@link JavacCheck} that uses the internal {@link JavaCompiler} interface. Use {@link #isSupported()} to check
+ * if the current runtime supports the internal {@link JavaCompiler}.
  * 
  * @author Adam
  */

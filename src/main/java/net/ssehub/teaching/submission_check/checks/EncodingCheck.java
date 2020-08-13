@@ -32,7 +32,9 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Checks that all files in the submission have a valid encoding.
+ * Checks that all text files in the submission have a valid encoding. Fails if any text file cannot be decoded with the
+ * required encoding. Creates {@link ResultMessage}s for each such incorrectly encoded file. Which files are text files
+ * is determined via {@link Files#probeContentType(java.nio.file.Path)}.
  * 
  * @author Adam
  */

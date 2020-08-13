@@ -38,7 +38,8 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Runs Checkstyle on all Java source files.
+ * Runs Checkstyle on all Java source files. Fails if there are any Checkstyle errors. Creates {@link ResultMessage}s
+ * for all Checkstyle errors and warnings.
  * 
  * @author Adam
  */

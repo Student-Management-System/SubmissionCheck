@@ -22,7 +22,9 @@ import java.util.List;
 import net.ssehub.teaching.submission_check.ResultMessage;
 
 /**
- * A check that runs on a submission.
+ * A check that runs on a submission directory. Checks whether a certain requirement is fulfilled by the submission.
+ * Can either fail or succeed (return value of {@link #run(File)}) and creates {@link ResultMessage}s with further
+ * information (see {@link #getResultMessages()}).
  * 
  * @author Adam
  */

@@ -33,7 +33,7 @@ import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * An {@link ISvnInterface} that uses command-line tools from SVN.
+ * An {@link ISvnInterface} that uses the <code>svnlook</code> command-line tool to interact with the SVN repository.
  * 
  * @author Adam
  */

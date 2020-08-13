@@ -24,8 +24,8 @@ import java.util.logging.Logger;
 import net.ssehub.teaching.submission_check.checks.Check;
 
 /**
- * Runs a given list of {@link Check}s and handles their output. Checks are run in sequence, and later checks are
- * only executed if the previous ones succeeded.
+ * Runs a given list of {@link Check}s and passes their output to a {@link ResultCollector}. Checks are run in sequence,
+ * and later checks are only executed if the previous ones succeeded.
  * 
  * @author Adam
  */

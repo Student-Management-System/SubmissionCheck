@@ -21,7 +21,8 @@ import java.util.Objects;
 import net.ssehub.teaching.submission_check.checks.Check;
 
 /**
- * A message send back containing the result of a {@link Check}. May contain information about files and line numbers.
+ * A message containing a result of a {@link Check}. May contain information about files and line numbers. These
+ * messages are sent back to the client by the {@link SubmissionHook}.
  * 
  * @author Adam
  */

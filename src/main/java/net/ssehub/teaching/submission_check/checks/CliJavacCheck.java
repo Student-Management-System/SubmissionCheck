@@ -34,7 +34,7 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Implements a {@link JavacCheck} that uses a standard command-line process to run the Java compiler.
+ * Implements a {@link JavacCheck} that uses standard command-line process <code>javac</code> to run the Java compiler.
  *  
  * @author Adam
  */

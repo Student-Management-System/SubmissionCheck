@@ -25,7 +25,9 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Checks that file-size restrictions are not validated.
+ * Checks that file-size restrictions are not violated. Fails if any file is larger than {@link #setMaxFileSize(long)}
+ * or if the whole submission is larger than {@link #setMaxSubmissionSize(long)}. Creates appropriate
+ * {@link ResultMessage}s for all files (or the whole submission) that are too large.
  * 
  * @author Adma
  */

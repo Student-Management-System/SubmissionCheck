@@ -30,7 +30,8 @@ import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Compiles all Java source files.
+ * Compiles all Java source files. Fails if any file does not compile. Creates {@link ResultMessage}s for all
+ * compilation errors and warnings.
  * 
  * @author Adam
  */

@@ -162,6 +162,7 @@ public class FileUtils {
      *  <li>{@link #newReader(File)} returns a reader that throws on read operations</li>
      *  <li>{@link #deleteFile(File)} always throws</li>
      * </ul>
+     * This method should only be used by test cases.
      * 
      * @param fileReadingShouldFail Whether all newly created file readers should throw {@link IOException}s.
      */
@@ -322,6 +323,7 @@ public class FileUtils {
     
     /**
      * Removes all temporary folders created via {@link #createTemporaryDirectory()}. Called by a shutdown hook.
+     * Package visibility for test cases.
      */
     static void cleanTemporaryFolders() {
         synchronized (temporaryDirectories) {

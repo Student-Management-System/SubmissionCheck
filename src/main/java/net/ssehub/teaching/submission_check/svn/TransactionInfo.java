@@ -19,7 +19,7 @@ import java.io.File;
 import java.util.Objects;
 
 /**
- * Information about the currently running transaction.
+ * Information about the transaction that the submission hook is running for.
  * 
  * @author Adam
  */

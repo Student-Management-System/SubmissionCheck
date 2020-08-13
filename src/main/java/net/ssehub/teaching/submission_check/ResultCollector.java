@@ -23,8 +23,7 @@ import net.ssehub.teaching.submission_check.checks.Check;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 
 /**
- * Collects all {@link ResultMessage}s and status of {@link Check}s during an execution. After the collection phase,
- * the messages are serialized to be sent to the client.
+ * Collects all {@link ResultMessage}s and status of {@link Check}s during an execution.
  * 
  * @author Adam
  */
@@ -84,7 +83,14 @@ public class ResultCollector {
     }
     
     /**
-     * Returns the exit code that the hook should return.
+     * Returns the exit code that the hook should return. This depends on the phase:
+     * <ul>
+     *  <li>For the <b>PRE</b>-commit phase, a failure code is only generated if a test has failed. This is because
+     *  a failure in this phase will cause the commit to be rejected.</li>
+     *  <li>For the <b>POST</b>-commit phase, a failure code is generated if there is any message at all (even a
+     *  warning). A failure here does not influence the commit, but is required so that the client receives the
+     *  messages created by the hook.</li>
+     * </ul>
      * 
      * @param phase The {@link Phase} of that the hook is running in.
      * 

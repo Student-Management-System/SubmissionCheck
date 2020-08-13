@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.checks.Check;
-import net.ssehub.teaching.submission_check.otuput.XmlOutputFormatter;
+import net.ssehub.teaching.submission_check.output.XmlOutputFormatter;
 import net.ssehub.teaching.submission_check.svn.CliSvnInterface;
 import net.ssehub.teaching.submission_check.svn.ISvnInterface;
 import net.ssehub.teaching.submission_check.svn.SvnException;
@@ -35,7 +35,8 @@ import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 /**
  * The main class of this hook. This is called by the SVN hook mechanism. Talks to the {@link ISvnInterface} for the
- * proper setup and then orchestrates the execution of the {@link Check}s.
+ * proper setup and then orchestrates the execution of the {@link Check}s via a {@link Configuration} and
+ * {@link CheckRunner}.
  * 
  * @author Adam
  */

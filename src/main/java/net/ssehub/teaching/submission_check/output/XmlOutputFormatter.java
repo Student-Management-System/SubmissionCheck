@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package net.ssehub.teaching.submission_check.otuput;
+package net.ssehub.teaching.submission_check.output;
 
 import java.io.File;
 import java.io.StringWriter;

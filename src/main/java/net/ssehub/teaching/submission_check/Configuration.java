@@ -39,7 +39,8 @@ import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
 /**
- * Represents the preferences set by the user in a configuration file.
+ * Represents the preferences set by the user in a configuration file. This class also contains logic in which phase
+ * tests should run; this is not configurable by the user (see {@link #createChecks(Submission, Phase)}).
  * 
  * @author Adam
  */

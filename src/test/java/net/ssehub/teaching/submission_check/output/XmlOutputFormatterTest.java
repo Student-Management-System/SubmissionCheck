@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
-import net.ssehub.teaching.submission_check.otuput.XmlOutputFormatter;
 import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
 public class XmlOutputFormatterTest {

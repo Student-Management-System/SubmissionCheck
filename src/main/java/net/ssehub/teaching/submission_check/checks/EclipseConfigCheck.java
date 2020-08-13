@@ -27,7 +27,11 @@ import net.ssehub.teaching.submission_check.eclipse_config.EclipseProjectFile;
 import net.ssehub.teaching.submission_check.eclipse_config.InvalidEclipseConfigException;
 
 /**
- * Checks that the submission has a valid eclipse project configuration. 
+ * Checks that the submission has a valid eclipse project configuration. Fails if there is no valid eclipse project
+ * configuration in the submission, or if the project is not a Java project and {@link #setRequireJavaProject(boolean)}
+ * is set to <code>true</code>. Creates appropriate {@link ResultMessage}s for the errors. Also creates a warning
+ * {@link ResultMessage} if {@link #setRequireCheckstyleProject(boolean)} is <code>true</code> and the submitted
+ * project does not have Checkstyle enabled (does not fail in this case, though).
  * 
  * @author Adam
  */
