@@ -29,7 +29,7 @@ function check_jar_file() {
 	local file
 	for file in "${script_dir}"/*.jar
 	do
-		if [[ ! -z "${jarfile}" ]]
+		if [[ -n "${jarfile}" ]]
 		then
 			echo "ERROR: Found too many .jar files in release bundle:" "${script_dir}"/*.jar
 			exit 1
@@ -62,7 +62,7 @@ function check_repository() {
 	then
 		echo "WARNING: ${repository} already has hooks installed"
 		local continue
-		read -p "Overwrite? [y/N] " continue
+		read -r -p "Overwrite? [y/N] " continue
 		[[ "${continue}" =~ ^[y|Y]$ ]] || exit 0
 	fi
 }
