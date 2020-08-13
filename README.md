@@ -99,3 +99,7 @@ contains the output error and warning messages from the checks. See
 [`doc/xmlFormat.md`](doc/xmlFormat.md) for an explanation of the XML output
 format. This XML format is compatible with the old jSvnSubmitHook so that all
 old submission tools can be used without modification.
+
+## Building
+
+This project uses Maven. Typically, you will want to run `mvn clean install` to build this project.
