@@ -72,11 +72,11 @@ public class InternalJavacCheck extends JavacCheck {
         try {
             CompilationTask task = compiler.getTask(
                     Writer.nullWriter(), // discard additional output
-                    null, // no JavaFileManager
-                    diagnosticCollector, // the collector for errors
+                    fileManager,
+                    diagnosticCollector,
                     buildOptions(),
                     null, // no additional classes for annotation processing
-                    javaFileObjects // the Java source files we want to compile
+                    javaFileObjects
             );
     
             success = task.call();
@@ -122,6 +122,9 @@ public class InternalJavacCheck extends JavacCheck {
                 classpath.add(classpathEntry.getPath());
             }
             options.add(classpath.toString());
+        } else {
+            options.add("--class-path");
+            options.add("");
         }
         
         return options;
@@ -178,5 +181,5 @@ public class InternalJavacCheck extends JavacCheck {
             addResultMessage(resultMessage);
         }
     }
-
+    
 }

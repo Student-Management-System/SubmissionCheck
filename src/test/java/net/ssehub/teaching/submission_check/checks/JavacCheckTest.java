@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.lang.ProcessBuilder.Redirect;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -413,13 +415,17 @@ public abstract class JavacCheckTest {
         assertThat("Postcondition: run with invalid classpath set should not succeed",
                 check.run(testDirecotry), is(false));
         
+        List<ResultMessage> expected = new LinkedList<>();
+        expected.add(new ResultMessage("javac", MessageType.ERROR, "package util does not exist")
+                .setFile(new File("Main.java")).setLine(1).setColumn(12));
+        
+        if (check instanceof CliJavacCheck) {
+            expected.add(new ResultMessage("javac", MessageType.ERROR, "cannot find symbol")
+                        .setFile(new File("Main.java")).setLine(7).setColumn(9));
+        }
+        
         assertThat("Postcondition: should create error messages",
-                check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("javac", MessageType.ERROR, "package util does not exist")
-                            .setFile(new File("Main.java")).setLine(1).setColumn(12),
-                        new ResultMessage("javac", MessageType.ERROR, "cannot find symbol")
-                            .setFile(new File("Main.java")).setLine(7).setColumn(9)
-                ));
+                check.getResultMessages(), containsInAnyOrder(expected.toArray()));
     }
     
     @Test
@@ -458,6 +464,26 @@ public abstract class JavacCheckTest {
         
         assertThat("Postcondition: classpath is cleared",
                 check.getClasspath(), is(Arrays.asList()));
+    }
+    
+    @Test
+    public void submissionCheckClassesNotInClasspath() {
+        testDirecotry = new File(TESTDATA, "usesClassesFromSubmissionCheck");
+        assertThat("Precondition: directory with test files does not exist",
+                testDirecotry.isDirectory());
+        
+        JavacCheck check = creatInstance();
+        
+        assertThat("Postcondition: file that uses submission check classes should not compile",
+                check.run(testDirecotry), is(false));
+        
+        assertThat("Postcondition: should create error messages",
+                check.getResultMessages(), containsInAnyOrder(
+                        new ResultMessage("javac", MessageType.ERROR, "package net.ssehub.teaching.submission_check does not exist")
+                                .setFile(new File("Main.java")).setLine(4).setColumn(45),
+                        new ResultMessage("javac", MessageType.ERROR, "package net.ssehub.teaching.submission_check does not exist")
+                                .setFile(new File("Main.java")).setLine(5).setColumn(59)
+                ));
     }
     
     @Test
