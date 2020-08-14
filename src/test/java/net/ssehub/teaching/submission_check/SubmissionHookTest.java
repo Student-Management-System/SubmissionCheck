@@ -15,15 +15,19 @@
  */
 package net.ssehub.teaching.submission_check;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,6 +37,7 @@ import net.ssehub.teaching.submission_check.svn.SvnException;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.LoggingSetup;
+import net.ssehub.teaching.submission_check.utils.LoggingSetupTest;
 
 public class SubmissionHookTest {
 
@@ -122,6 +127,123 @@ public class SubmissionHookTest {
         
         assertThat("Postcondition: configuration has correct values read",
                 hook.getConfiguration().getProperty("somesetting", new Submission("", "")), is("somevalue"));
+    }
+    
+    @Test
+    public void notifyStudentManagementSystemNotConfigured() throws SvnException, IOException {
+        MockSvnInterface svnInterface = new MockSvnInterface();
+        svnInterface.setExpectedPhase(Phase.POST_COMMIT);
+        svnInterface.setExpectedRepositoryPath(TESTDATA.getAbsoluteFile());
+        svnInterface.setExpectedTransactionId("42-c");
+        
+        svnInterface.setTransactionInfo(new TransactionInfo(TESTDATA.getAbsoluteFile(), "someuser", "42-c", Phase.POST_COMMIT));
+        
+        svnInterface.setModifiedSubmissions(new HashSet<>(Arrays.asList(
+                new Submission("Homework01", "Group05"), new Submission("Homework17", "Group08"))));
+        
+        SubmissionHook hook = new SubmissionHook(new String[] {"POST", TESTDATA.getAbsolutePath(), "42-c"}, svnInterface);
+        
+        File configFile = new File(TESTDATA, "config.properties");
+        assertThat("Precondition: test config file exists",
+                configFile.isFile(), is(true));
+        
+        hook.readConfiguration(configFile);
+        
+        hook.queryMetadataFromSvn(); // initializes modified submissions
+        
+        ByteArrayOutputStream logoutput = new ByteArrayOutputStream();
+        StreamHandler handler = new StreamHandler(logoutput, new SimpleFormatter());
+        try {
+            LoggingSetupTest.ROOT_LOGGER.addHandler(handler);
+            
+            hook.notifyStudentManagementSystem();
+            
+            handler.close();
+            
+            assertThat("Postcondition: should contain warning message about improper configuration",
+                    new String(logoutput.toByteArray()), containsString("Student Management System connection not configured properly"));
+            
+        } finally {
+            LoggingSetupTest.ROOT_LOGGER.removeHandler(handler);
+        }
+    }
+    
+    @Test
+    public void notifyStudentManagementSystemIgnoredInPre() throws SvnException, IOException {
+        MockSvnInterface svnInterface = new MockSvnInterface();
+        svnInterface.setExpectedPhase(Phase.PRE_COMMIT);
+        svnInterface.setExpectedRepositoryPath(TESTDATA.getAbsoluteFile());
+        svnInterface.setExpectedTransactionId("42-c");
+        
+        svnInterface.setTransactionInfo(new TransactionInfo(TESTDATA.getAbsoluteFile(), "someuser", "42-c", Phase.PRE_COMMIT));
+        
+        svnInterface.setModifiedSubmissions(new HashSet<>(Arrays.asList(
+                new Submission("Homework01", "Group05"), new Submission("Homework17", "Group08"))));
+        
+        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", TESTDATA.getAbsolutePath(), "42-c"}, svnInterface);
+        
+        File configFile = new File(TESTDATA, "config.properties");
+        assertThat("Precondition: test config file exists",
+                configFile.isFile(), is(true));
+        
+        hook.readConfiguration(configFile);
+        
+        hook.queryMetadataFromSvn(); // initializes modified submissions
+        
+        ByteArrayOutputStream logoutput = new ByteArrayOutputStream();
+        StreamHandler handler = new StreamHandler(logoutput, new SimpleFormatter());
+        try {
+            LoggingSetupTest.ROOT_LOGGER.addHandler(handler);
+            
+            hook.notifyStudentManagementSystem();
+            
+            handler.close();
+            
+            assertThat("Postcondition: should do nothing in pre-commit, thus no log output",
+                    new String(logoutput.toByteArray()), is(""));
+            
+        } finally {
+            LoggingSetupTest.ROOT_LOGGER.removeHandler(handler);
+        }
+    }
+    
+    @Test
+    public void notifyStudentManagementSystemNetworkError() throws SvnException, IOException {
+        MockSvnInterface svnInterface = new MockSvnInterface();
+        svnInterface.setExpectedPhase(Phase.POST_COMMIT);
+        svnInterface.setExpectedRepositoryPath(TESTDATA.getAbsoluteFile());
+        svnInterface.setExpectedTransactionId("42-c");
+        
+        svnInterface.setTransactionInfo(new TransactionInfo(TESTDATA.getAbsoluteFile(), "someuser", "42-c", Phase.POST_COMMIT));
+        
+        svnInterface.setModifiedSubmissions(new HashSet<>(Arrays.asList(
+                new Submission("Homework01", "Group05"), new Submission("Homework17", "Group08"))));
+        
+        SubmissionHook hook = new SubmissionHook(new String[] {"POST", TESTDATA.getAbsolutePath(), "42-c"}, svnInterface);
+        
+        File configFile = new File(TESTDATA, "studentManagement.properties");
+        assertThat("Precondition: test config file exists",
+                configFile.isFile(), is(true));
+        
+        hook.readConfiguration(configFile);
+        
+        hook.queryMetadataFromSvn(); // initializes modified submissions
+        
+        ByteArrayOutputStream logoutput = new ByteArrayOutputStream();
+        StreamHandler handler = new StreamHandler(logoutput, new SimpleFormatter());
+        try {
+            LoggingSetupTest.ROOT_LOGGER.addHandler(handler);
+            
+            hook.notifyStudentManagementSystem();
+            
+            handler.close();
+            
+            assertThat("Postcondition: should contain warning message about improper configuration",
+                    new String(logoutput.toByteArray()), containsString("Failed to send result to Student Management System"));
+            
+        } finally {
+            LoggingSetupTest.ROOT_LOGGER.removeHandler(handler);
+        }
     }
     
     @BeforeClass

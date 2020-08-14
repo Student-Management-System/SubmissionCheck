@@ -22,8 +22,10 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import net.ssehub.exercisesubmitter.protocol.backend.NetworkException;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.checks.Check;
+import net.ssehub.teaching.submission_check.output.StudentManagementSubmitter;
 import net.ssehub.teaching.submission_check.output.XmlOutputFormatter;
 import net.ssehub.teaching.submission_check.svn.CliSvnInterface;
 import net.ssehub.teaching.submission_check.svn.ISvnInterface;
@@ -109,93 +111,113 @@ public class SubmissionHook {
 
     /**
      * Returns the phase of this hook.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @return The phase of this hook.
      */
-    public Phase getPhase() {
+    Phase getPhase() {
         return phase;
     }
     
     /**
      * Returns the repository path of this hook.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @return The repository path of this hook.
      */
-    public File getRepositoryPath() {
+    File getRepositoryPath() {
         return repositoryPath;
     }
     
     /**
      * Returns the transaction ID of this hook.
+     * <p>
+     * Package visibility for test cases.
      *  
      * @return The transaction ID.
      */
-    public String getTransactionId() {
+    String getTransactionId() {
         return transactionId;
     }
     
     /**
      * Returns the {@link ResultCollector} used by this hook.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @return The {@link ResultCollector}.
      */
-    public ResultCollector getResultCollector() {
+    ResultCollector getResultCollector() {
         return resultCollector;
     }
     
     /**
      * Retrieves the metadata about the transaction and modified submissions from SVN.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @throws SvnException If an exception occurs during an SVN operation.
      */
-    public void queryMetadataFromSvn() throws SvnException {
+    void queryMetadataFromSvn() throws SvnException {
         this.transactionInfo = svnInterface.createTransactionInfo(phase, repositoryPath, transactionId);
         this.modifiedSubmissions = svnInterface.getModifiedSubmissions(transactionInfo);
     }
     
     /**
      * Reads a {@link Configuration} from the specified file path.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @param configurationFile The configuration file to read.
      * 
      * @throws IOException If reading the configuration file fails.
      */
-    public void readConfiguration(File configurationFile) throws IOException {
+    void readConfiguration(File configurationFile) throws IOException {
         this.configuration = new Configuration(configurationFile);
     }
     
     /**
      * Returns the configuration that was read for this hook.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @return The {@link Configuration}.
      * 
      * @see #readConfiguration(File)
      */
-    public Configuration getConfiguration() {
+    Configuration getConfiguration() {
         return configuration;
     }
     
     /**
      * Information on the SVN transaction that this hook runs for. Populated in {@link #queryMetadataFromSvn()}.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @return The {@link TransactionInfo}.
      */
-    public TransactionInfo getTransactionInfo() {
+    TransactionInfo getTransactionInfo() {
         return transactionInfo;
     }
     
     /**
      * The list of modified submission directories. Populated in {@link #queryMetadataFromSvn()}.
+     * <p>
+     * Package visibility for test cases.
      * 
      * @return The list of modified {@link Submission}s.
      */
-    public Set<Submission> getModifiedSubmissions() {
+    Set<Submission> getModifiedSubmissions() {
         return modifiedSubmissions;
     }
     
     /**
      * Runs the {@link Check}s on all submissions that are modified by this transaction (as queried by
      * {@link #queryMetadataFromSvn()}).
+     * <p>
+     * Package visibility for test cases.
      * 
      * @throws IOException If creating a temporary checkout fails. 
      * @throws SvnException If checking out the submission fails.
@@ -203,7 +225,7 @@ public class SubmissionHook {
      * 
      * @see #getModifiedSubmissions()
      */
-    public void runChecksOnAllModifiedSubmissions() throws IOException, SvnException, ConfigurationException {
+    void runChecksOnAllModifiedSubmissions() throws IOException, SvnException, ConfigurationException {
         for (Submission submission : modifiedSubmissions) {
             runChecksOnSubmission(submission);
         }
@@ -218,7 +240,7 @@ public class SubmissionHook {
      * @throws SvnException If checking out the submission fails.
      * @throws ConfigurationException If the {@link Check}s are not correctly configured.
      */
-    public void runChecksOnSubmission(Submission submission) throws IOException, SvnException, ConfigurationException {
+    private void runChecksOnSubmission(Submission submission) throws IOException, SvnException, ConfigurationException {
         LOGGER.log(Level.FINE, "Checking submission {0}", submission);
         
         File checkoutDirecotry = FileUtils.createTemporaryDirectory();
@@ -232,6 +254,32 @@ public class SubmissionHook {
         
         LOGGER.log(Level.INFO, "Check result for {0}: {1}", new Object[] {
             submission, success ? "successful" : "unsuccessful"});
+    }
+    
+    /**
+     * Notifies the Student Management System about the results of this commit hook.
+     * <p>
+     * Package visibility for test cases.
+     * 
+     * @see StudentManagementSubmitter
+     */
+    void notifyStudentManagementSystem() {
+        if (phase == Phase.POST_COMMIT) {
+            for (Submission submission : modifiedSubmissions) {
+                try {
+                    StudentManagementSubmitter submitter = new StudentManagementSubmitter(
+                            configuration.getStudentManagementSystemConfiguration(submission));
+                    
+                    submitter.submit(submission, resultCollector.getMessageForSubmission(submission));
+                    
+                } catch (NetworkException e) {
+                    LOGGER.log(Level.SEVERE, "Failed to send result to Student Management System", e);
+                    
+                } catch (ConfigurationException e) {
+                    LOGGER.log(Level.WARNING, "Student Management System connection not configured properly", e);
+                }
+            }
+        }
     }
     
     /**
@@ -253,6 +301,7 @@ public class SubmissionHook {
             
             if (!configuration.getUnrestrictedUsers().contains(transactionInfo.getAuthor())) {
                 runChecksOnAllModifiedSubmissions();
+                notifyStudentManagementSystem();
                 
             } else {
                 LOGGER.log(Level.INFO, "{0} is an unrestrited user, skipping all checks", transactionInfo.getAuthor());
