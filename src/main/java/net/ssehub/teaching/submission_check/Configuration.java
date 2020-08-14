@@ -35,6 +35,8 @@ import net.ssehub.teaching.submission_check.checks.EncodingCheck;
 import net.ssehub.teaching.submission_check.checks.FileSizeCheck;
 import net.ssehub.teaching.submission_check.checks.InternalJavacCheck;
 import net.ssehub.teaching.submission_check.checks.JavacCheck;
+import net.ssehub.teaching.submission_check.output.StudentManagementSubmitter;
+import net.ssehub.teaching.submission_check.output.StudentManagementSubmitter.StudentManagementConfig;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 
@@ -137,6 +139,25 @@ public class Configuration {
         if (value != null) {
             then.consume(value);
         }
+    }
+    
+    /**
+     * Gets the property for the given key that is configured for the given submission. If the property is not set,
+     * a {@link ConfigurationException} is thrown (i.e. the property is required).
+     * 
+     * @param key The property key.
+     * @param submission The submission to get the value for.
+     * 
+     * @return The value of that property, never <code>null</code>.
+     * 
+     * @throws ConfigurationException If the given property key is not specified.
+     */
+    private String getRequiredProperty(String key, Submission submission) throws ConfigurationException {
+        String value = getProperty(key, submission);
+        if (value == null) {
+            throw new ConfigurationException("Required value " + key + " is missing for submission " + submission);
+        }
+        return value;
     }
     
     /**
@@ -353,6 +374,31 @@ public class Configuration {
         }
         
         return checks; 
+    }
+    
+    /**
+     * Creates the configuration for the {@link StudentManagementSubmitter} for the given submission.
+     * 
+     * @param submission The submission to create the configuration for.
+     * 
+     * @return The configuration parameters for the {@link StudentManagementSubmitter}.
+     * 
+     * @throws ConfigurationException If the configuration is incomplete.
+     */
+    public StudentManagementConfig getStudentManagementSystemConfiguration(Submission submission)
+            throws ConfigurationException {
+        
+        StudentManagementConfig config = new StudentManagementConfig();
+        
+        config.setUrl(getRequiredProperty("managementSystem.url", submission));
+        config.setCourseName(getRequiredProperty("managementSystem.course.name", submission));
+        config.setCourseSemester(getRequiredProperty("managementSystem.course.semester", submission));
+        
+        config.setAuthenticationUrl(getRequiredProperty("managementSystem.auth.url", submission));
+        config.setAuthenticationUsername(getRequiredProperty("managementSystem.auth.username", submission));
+        config.setAuthenticationPassword(getRequiredProperty("managementSystem.auth.password", submission));
+        
+        return config;
     }
 
 }

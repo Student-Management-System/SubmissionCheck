@@ -35,6 +35,135 @@ import net.ssehub.teaching.submission_check.Submission;
  */
 public class StudentManagementSubmitter {
     
+    /**
+     * Contains configuration for the communication with the Student Management System.
+     * 
+     * @author Adam
+     */
+    public static class StudentManagementConfig {
+
+        private String url;
+        
+        private String courseName;
+        
+        private String courseSemester;
+        
+        private String authenticationUrl;
+        
+        private String authenticationUsername;
+        
+        private String authenticationPassword;
+
+        /**
+         * Returns the URL to the authentication system.
+         * 
+         * @return The authentication system URL.
+         */
+        public String getAuthenticationUrl() {
+            return authenticationUrl;
+        }
+
+        /**
+         * Sets the URL to the authentication system.
+         * 
+         * @param authenticationUrl The authentication system URL.
+         */
+        public void setAuthenticationUrl(String authenticationUrl) {
+            this.authenticationUrl = authenticationUrl;
+        }
+
+        /**
+         * Returns the URL to the Student Management System.
+         * 
+         * @return The Student Management System URL.
+         */
+        public String getUrl() {
+            return url;
+        }
+        
+        /**
+         * Sets the URL to the Student Management System.
+         * 
+         * @param studentManagemenSystemtUrl The Student Management System URL.
+         */
+        public void setUrl(String studentManagemenSystemtUrl) {
+            this.url = studentManagemenSystemtUrl;
+        }
+
+        /**
+         * Returns the name of the course that the submission for this hook is for.
+         * 
+         * @return The course name.
+         */
+        public String getCourseName() {
+            return courseName;
+        }
+        
+        /**
+         * Sets the name of the course that the submission for this hook is for.
+         * 
+         * @param courseName The course name.
+         */
+        public void setCourseName(String courseName) {
+            this.courseName = courseName;
+        }
+        
+        /**
+         * Returns the semester of the course that the submission for this hook is for.
+         * 
+         * @return The course semester.
+         */
+        public String getCourseSemester() {
+            return courseSemester;
+        }
+        
+        /**
+         * Sets the semester of the course that the submission for this hook is for.
+         * 
+         * @param semester The course semester.
+         */
+        public void setCourseSemester(String semester) {
+            this.courseSemester = semester;
+        }
+        
+        /**
+         * Returns the user-name to authenticate with.
+         * 
+         * @return The user-name for authentication.
+         */
+        public String getAuthenticationUsername() {
+            return authenticationUsername;
+        }
+        
+        /**
+         * Sets the user-name to authenticate with.
+         * 
+         * @param userName The user-name for authentication.
+         */
+        public void setAuthenticationUsername(String userName) {
+            this.authenticationUsername = userName;
+        }
+        
+        /**
+         * Returns the password to authenticate with.
+         * 
+         * @return The password for authentication.
+         */
+        public String getAuthenticationPassword() {
+            return authenticationPassword;
+        }
+        
+        /**
+         * Sets the password to authenticate with.
+         * 
+         * @param password The password for authentication.
+         */
+        public void setAuthenticationPassword(String password) {
+            this.authenticationPassword = password;
+        }
+        
+    }
+    
     private SubmissionHookProtocol protocol;
     
     /**
@@ -61,13 +190,13 @@ public class StudentManagementSubmitter {
         
         this(new SubmissionHookProtocol(
                 configuration.getAuthenticationUrl(),
-                configuration.getStudentManagemenSystemtUrl(),
+                configuration.getUrl(),
                 configuration.getCourseName(),
                 null // submission server is irrelevant
         ));
         
-        protocol.setSemester(configuration.getSemester());
-        protocol.login(configuration.getUserName(), configuration.getPassword());
+        protocol.setSemester(configuration.getCourseSemester());
+        protocol.login(configuration.getAuthenticationUsername(), configuration.getAuthenticationPassword());
     }
     
     

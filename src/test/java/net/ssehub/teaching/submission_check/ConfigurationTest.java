@@ -39,6 +39,7 @@ import net.ssehub.teaching.submission_check.checks.EncodingCheck;
 import net.ssehub.teaching.submission_check.checks.FileSizeCheck;
 import net.ssehub.teaching.submission_check.checks.InternalJavacCheck;
 import net.ssehub.teaching.submission_check.checks.JavacCheck;
+import net.ssehub.teaching.submission_check.output.StudentManagementSubmitter.StudentManagementConfig;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
@@ -533,6 +534,35 @@ public class ConfigurationTest {
         
         assertThat("Postcondition: EclipseConfigCheck should have further settings set",
                 ((EclipseConfigCheck) checks.get(0)).getRequireJavaProject(), is(true));
+    }
+    
+    @Test(expected = ConfigurationException.class)
+    public void studentManagementSystemConfigurationNotConfigured() throws IOException, ConfigurationException {
+        File configFile = new File(TESTDATA, "empty.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        config.getStudentManagementSystemConfiguration(new Submission("Exercise01", "Group01"));
+    }
+    
+    @Test
+    public void studentManagementSystemConfiguration() throws IOException, ConfigurationException {
+        File configFile = new File(TESTDATA, "studentManagementSystemConfiguration.properties");
+        assertThat("Precondition: test file should exist",
+                configFile.isFile(), is(true));
+        
+        Configuration config = new Configuration(configFile);
+        
+        StudentManagementConfig result = config.getStudentManagementSystemConfiguration(new Submission("Exercise01", "Group01"));
+        
+        assertThat(result.getUrl(), is("https://student-management.example.com:3000/api/"));
+        assertThat(result.getCourseName(), is("Programmierpraktikum I: Java"));
+        assertThat(result.getCourseSemester(), is("WiSe 2020"));
+        assertThat(result.getAuthenticationUrl(), is("https://student-management.example.com:2000/auth/"));
+        assertThat(result.getAuthenticationUsername(), is("admin"));
+        assertThat(result.getAuthenticationPassword(), is("secret-password"));
     }
     
     @BeforeClass
