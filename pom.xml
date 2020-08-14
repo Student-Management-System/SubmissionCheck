@@ -8,7 +8,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<name>SubmissionCheck</name>
-	<description>A SVN commit-hook that runs several checks for student submissions.</description>
+	<description>A SVN commit-hook that runs several checks for student
+		submissions.</description>
 	<url>https://github.com/Student-Management-System/SubmissionCheck</url>
 
 	<organization>
@@ -24,14 +25,18 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:https://github.com/Student-Management-System/SubmissionCheck.git</connection>
-		<developerConnection>scm:git:https://github.com/Student-Management-System/SubmissionCheck.git</developerConnection>
-		<url>https://github.com/Student-Management-System/SubmissionCheck</url>
+		<connection>scm:git:https://github.com/Student-Management-System/SubmissionCheck.git
+		</connection>
+		<developerConnection>scm:git:https://github.com/Student-Management-System/SubmissionCheck.git
+		</developerConnection>
+		<url>https://github.com/Student-Management-System/SubmissionCheck
+		</url>
 	</scm>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<mainclass>net.ssehub.teaching.submission_check.SubmissionHook</mainclass>
+		<mainclass>net.ssehub.teaching.submission_check.SubmissionHook
+		</mainclass>
 	</properties>
 
 	<build>
@@ -184,6 +189,11 @@
 			<groupId>com.puppycrawl.tools</groupId>
 			<artifactId>checkstyle</artifactId>
 			<version>8.34</version>
+		</dependency>
+		<dependency>
+			<groupId>ssehub.net.studentmgmt</groupId>
+			<artifactId>submitter-protocol</artifactId>
+			<version>0.0.1</version>
 		</dependency>
 
 		<dependency>
