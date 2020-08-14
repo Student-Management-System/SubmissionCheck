@@ -38,7 +38,8 @@ public class StudentManagementSubmitter {
     private SubmissionHookProtocol protocol;
     
     /**
-     * This constructor is mostly intended for testing and allows to mock the internally used network protocol.
+     * This constructor is intended for testing and allows to mock the internally used network protocol.
+     * 
      * @param protocol The protocol to use.
      */
     protected StudentManagementSubmitter(SubmissionHookProtocol protocol) {
@@ -48,6 +49,7 @@ public class StudentManagementSubmitter {
     /**
      * Creates a new {@link StudentManagementSubmitter} instance to submit {@link ResultMessage}s
      * to the <b>Student Management Server</b>.
+     * 
      * @param authenticationURL The URL of the authentication server (aka Sparky service)
      * @param stdMgmtURL The URL of the student management service
      * @param courseName The course that is associated with the exercise submitter.
@@ -55,14 +57,15 @@ public class StudentManagementSubmitter {
      * @param submissionServer The root (URL) where to submit assignments (exercises).
      * @param userName The user name to submit the results
      * @param password The password belonging to the user.
+     * 
      * @throws UnknownCredentialsException If userName and password do not match to a valid (tutor)
      *     account on the server.
      * @throws ServerNotFoundException If one of the two servers is unreachable by the specified URLs.
      */
     //checkstyle: stop parameter number check
     public StudentManagementSubmitter(String authenticationURL, String stdMgmtURL, String courseName, String semester,
-        String submissionServer, String userName, String password) throws UnknownCredentialsException,
-        ServerNotFoundException {
+            String submissionServer, String userName, String password)
+            throws UnknownCredentialsException, ServerNotFoundException {
     //checkstyle: resume parameter number check
         
         this(new SubmissionHookProtocol(authenticationURL, stdMgmtURL, courseName, submissionServer));
@@ -73,10 +76,12 @@ public class StudentManagementSubmitter {
     
     /**
      * Submits the results of the automatic tests of one submission to the <b>Student Management Server</b>.
+     * 
      * @param submission The checked submission.
      * @param messages The results of the automatic tests to submit.
      * 
-     * @return <tt>true</tt> if submission was successful, <tt>false</tt> otherwise.
+     * @return <code>true</code> if submission was successful, <code>false</code> otherwise.
+     * 
      * @throws NetworkException When network problems occur (i.e., server not reachable, user not authorized).
      */
     public boolean submit(Submission submission, List<ResultMessage> messages) throws NetworkException {
@@ -88,11 +93,13 @@ public class StudentManagementSubmitter {
         
         Assessment assessment = protocol.loadAssessmentByName(assignment, submission.getGroup());
         assessment.clearPartialAssessments();
+        
         for (ResultMessage msg : messages) {
             String lineNo = msg.getLine() != null ? msg.getLine().toString() : null;
             String path = msg.getFile() != null ? msg.getFile().getPath() : null;
             assessment.addAutomaticReview(msg.getCheckName(), msg.getType().name(), msg.getMessage(), path, lineNo);
         }
+        
         return protocol.submitAssessment(assignment, assessment);
     }
 

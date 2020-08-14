@@ -26,6 +26,7 @@ import net.ssehub.exercisesubmitter.protocol.backend.NetworkException;
 import net.ssehub.exercisesubmitter.protocol.frontend.Assessment;
 import net.ssehub.exercisesubmitter.protocol.frontend.Assignment;
 import net.ssehub.exercisesubmitter.protocol.frontend.Assignment.State;
+import net.ssehub.exercisesubmitter.protocol.frontend.SubmissionHookProtocol;
 import net.ssehub.studentmgmt.backend_api.model.AssessmentDto;
 import net.ssehub.studentmgmt.backend_api.model.PartialAssessmentDto;
 import net.ssehub.studentmgmt.backend_api.model.UserDto;
@@ -35,17 +36,16 @@ import net.ssehub.teaching.submission_check.Submission;
 
 /**
  * Tests the {@link StudentManagementSubmitter}.
+ * 
  * @author El-Sharkawy
- *
  */
 public class StudentManagementSubmitterTest {
-    private static class SubmissionHookProtocol extends net.ssehub.exercisesubmitter.protocol.frontend.
-        SubmissionHookProtocol {
+    private static class MockSubmissionHookProtocol extends SubmissionHookProtocol {
 
         private Assignment assignment;
         private Assessment assessment;
         
-        public SubmissionHookProtocol() {
+        public MockSubmissionHookProtocol() {
             super(null, null, null, null);
         }
         
@@ -77,12 +77,12 @@ public class StudentManagementSubmitterTest {
     @Test
     public void oneBasicMessage() throws NetworkException {
         // Simulate submission
-        SubmissionHookProtocol protocol = new SubmissionHookProtocol();
+        MockSubmissionHookProtocol protocol = new MockSubmissionHookProtocol();
         StudentManagementSubmitter submitter = new StudentManagementSubmitter(protocol);
         Submission submission = new Submission("exercise", "auser");
         ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
         
-        // Check that submission was successfull
+        // Check that submission was successful
         Assert.assertTrue(submitter.submit(submission, Arrays.asList(msg)));
         
         // Check that expected data was submitted
@@ -96,14 +96,14 @@ public class StudentManagementSubmitterTest {
     @Test
     public void oneFullMessage() throws NetworkException {
         // Simulate submission
-        SubmissionHookProtocol protocol = new SubmissionHookProtocol();
+        MockSubmissionHookProtocol protocol = new MockSubmissionHookProtocol();
         StudentManagementSubmitter submitter = new StudentManagementSubmitter(protocol);
         Submission submission = new Submission("exercise", "auser");
         ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
         msg.setFile(new File("src/pkg/Class.java"));
         msg.setLine(1);
         
-        // Check that submission was successfull
+        // Check that submission was successful
         Assert.assertTrue(submitter.submit(submission, Arrays.asList(msg)));
         
         // Check that expected data was submitted
@@ -117,7 +117,7 @@ public class StudentManagementSubmitterTest {
     
     @Test(expected = DataNotFoundException.class)
     public void invalidAssignment() throws NetworkException {
-        SubmissionHookProtocol protocol = new SubmissionHookProtocol() {
+        MockSubmissionHookProtocol protocol = new MockSubmissionHookProtocol() {
             @Override
             public Assignment getAssignmentByName(String name) {
                 return null;
@@ -129,4 +129,5 @@ public class StudentManagementSubmitterTest {
         ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
         submitter.submit(submission, Arrays.asList(msg));
     }
+    
 }
