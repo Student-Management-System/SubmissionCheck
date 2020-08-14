@@ -228,7 +228,7 @@ public class SubmissionHook {
         for (Check check : configuration.createChecks(submission, phase)) {
             checkRunner.addCheck(check);
         }
-        boolean success = checkRunner.run(checkoutDirecotry);
+        boolean success = checkRunner.run(submission, checkoutDirecotry);
         
         LOGGER.log(Level.INFO, "Check result for {0}: {1}", new Object[] {
             submission, success ? "successful" : "unsuccessful"});
@@ -265,7 +265,7 @@ public class SubmissionHook {
             resultCollector.addMessage(new ResultMessage("hook", MessageType.ERROR, "An internal error occurred"));
         }
 
-        System.err.println(new XmlOutputFormatter().format(resultCollector.getMessages()));
+        System.err.println(new XmlOutputFormatter().format(resultCollector.getAllMessages()));
         return resultCollector.getExitCode(phase);
     }
     

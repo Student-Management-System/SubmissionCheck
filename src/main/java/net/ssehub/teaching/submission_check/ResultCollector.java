@@ -16,8 +16,10 @@
 package net.ssehub.teaching.submission_check;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import net.ssehub.teaching.submission_check.checks.Check;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
@@ -29,7 +31,9 @@ import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
  */
 public class ResultCollector {
     
-    private List<ResultMessage> messages;
+    private List<ResultMessage> allMessages;
+    
+    private Map<Submission, List<ResultMessage>> messagesBySubmission;
     
     private boolean overallSuccess;
     
@@ -37,17 +41,36 @@ public class ResultCollector {
      * Creates a new {@link ResultMessage} with no messages yet.
      */
     public ResultCollector() {
-        this.messages = new LinkedList<>();
+        this.allMessages = new LinkedList<>();
+        this.messagesBySubmission = new HashMap<>();
         this.overallSuccess = true;
     }
     
     /**
-     * Adds a {@link ResultMessage} that was produced by a {@link Check}.
+     * Adds a {@link ResultMessage} that is not associated with any {@link Submission}. Usually this should only be
+     * called for global messages (i.e. internal errors in the hook).
      * 
      * @param message A {@link ResultMessage}.
      */
     public void addMessage(ResultMessage message) {
-        this.messages.add(message);
+        this.allMessages.add(message);
+    }
+    
+    /**
+     * Adds a {@link ResultMessage} that was produced by a {@link Check} for a {@link Submission}.
+     * 
+     * @param message A {@link ResultMessage}.
+     * @param submission The {@link Submission} that the {@link ResultMessage} is created for.
+     */
+    public void addMessage(ResultMessage message, Submission submission) {
+        this.allMessages.add(message);
+        
+        List<ResultMessage> submissionMessages = messagesBySubmission.get(submission);
+        if (submissionMessages == null) {
+            submissionMessages = new LinkedList<>();
+            messagesBySubmission.put(submission, submissionMessages);
+        }
+        submissionMessages.add(message);
     }
     
     /**
@@ -60,14 +83,33 @@ public class ResultCollector {
     }
     
     /**
-     * Returns the previously added messages.
+     * Returns all messages for a given {@link Submission} that were previously added.
+     * 
+     * @param submission The {@link Submission} to get all messages for.
+     * 
+     * @return An unmodifiable view on the messages for a given {@link Submission}.
+     *      May be empty, but never <code>null</code>. 
+     *      
+     * @see #addMessage(ResultMessage, Submission)
+     */
+    public List<ResultMessage> getMessageForSubmission(Submission submission) {
+        List<ResultMessage> submissionMessages = messagesBySubmission.get(submission);
+        if (submissionMessages == null) {
+            submissionMessages = Collections.emptyList();
+        }
+        return Collections.unmodifiableList(submissionMessages);
+    }
+    
+    /**
+     * Returns all previously added messages.
      * 
      * @return An unmodifiable view on the previously added messages.
      * 
      * @see #addMessage(ResultMessage)
+     * @see #addMessage(ResultMessage, Submission)
      */
-    public List<ResultMessage> getMessages() {
-        return Collections.unmodifiableList(messages);
+    public List<ResultMessage> getAllMessages() {
+        return Collections.unmodifiableList(allMessages);
     }
     
     
@@ -111,7 +153,7 @@ public class ResultCollector {
             break;
             
         case POST_COMMIT:
-            if (overallSuccess && messages.isEmpty()) {
+            if (overallSuccess && allMessages.isEmpty()) {
                 exitCode = 0;
             } else {
                 exitCode = 1;

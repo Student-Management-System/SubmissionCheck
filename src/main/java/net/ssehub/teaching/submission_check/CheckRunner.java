@@ -66,14 +66,16 @@ public class CheckRunner {
     /**
      * Runs all checks on the given directory containing the submission files.
      * 
-     * @param submissionDirectory The directory containing the submission.
+     * @param submission The submission to run the checks for.
+     * @param submissionDirectory The directory containing the checked-out submission files.
      * 
      * @return Whether this run was successful, i.e. all {@link Check}s succeeded.
      */
-    public boolean run(File submissionDirectory) {
+    public boolean run(Submission submission, File submissionDirectory) {
         boolean success = true;
         for (Check check : this.checksToRun) {
-            LOGGER.log(Level.FINE, "Running {0}...", check.getClass().getSimpleName());
+            LOGGER.log(Level.FINE, "Running {0} on submission {1} in directory {2}...", new Object[] {
+                check.getClass().getSimpleName(), submission, submission});
             success = check.run(submissionDirectory);
             LOGGER.log(Level.INFO, "{0} {1}", new Object[] {
                     check.getClass().getSimpleName(), success ? "succeeded" : "failed"});
@@ -81,7 +83,7 @@ public class CheckRunner {
             resultCollector.addCheckResult(success);
             for (ResultMessage message : check.getResultMessages()) {
                 LOGGER.log(Level.INFO, "{0}", message);
-                resultCollector.addMessage(message);
+                resultCollector.addMessage(message, submission);
             }
             
             if (!success) {

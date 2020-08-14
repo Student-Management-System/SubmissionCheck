@@ -90,23 +90,23 @@ public class ResultCollectorTest {
     }
     
     @Test
-    public void storesMessages() {
+    public void storesAllMessages() {
         ResultCollector collector = new ResultCollector();
         
         assertThat("Precondition: empty collector should have no messages",
-                collector.getMessages(), is(Arrays.asList()));
+                collector.getAllMessages(), is(Arrays.asList()));
         
         collector.addMessage(new ResultMessage("javac", MessageType.ERROR, "abc"));
         
         assertThat("Postcondition: collector should store messages",
-                collector.getMessages(), is(Arrays.asList(
+                collector.getAllMessages(), is(Arrays.asList(
                         new ResultMessage("javac", MessageType.ERROR, "abc")
                 )));
         
         collector.addMessage(new ResultMessage("checkstyle", MessageType.WARNING, "def"));
         
         assertThat("Postcondition: collector should store messages",
-                collector.getMessages(), is(Arrays.asList(
+                collector.getAllMessages(), is(Arrays.asList(
                         new ResultMessage("javac", MessageType.ERROR, "abc"),
                         new ResultMessage("checkstyle", MessageType.WARNING, "def")
                 )));
@@ -137,6 +137,70 @@ public class ResultCollectorTest {
         collector.addCheckResult(false);
         assertThat("Postcondition: further results do not modify failure",
                 collector.getAllSuccessful(), is(false));
+    }
+    
+    @Test
+    public void storesMessagesForSubmission() {
+        ResultCollector collector = new ResultCollector();
+        
+        Submission s1 = new Submission("Exercise01", "Group01");
+        Submission s2 = new Submission("Exercise02", "Group01");
+        
+        assertThat("Precondition: empty collector should have no messages",
+                collector.getMessageForSubmission(s1), is(Arrays.asList()));
+        assertThat("Precondition: empty collector should have no messages",
+                collector.getMessageForSubmission(s2), is(Arrays.asList()));
+        
+        collector.addMessage(new ResultMessage("javac", MessageType.ERROR, "abc"), s1);
+        
+        assertThat("Postcondition: collector should store for correct exercise",
+                collector.getMessageForSubmission(s1), is(Arrays.asList(
+                        new ResultMessage("javac", MessageType.ERROR, "abc")
+                )));
+        assertThat("Postcondition: collector should store for correct exercise",
+                collector.getMessageForSubmission(s2), is(Arrays.asList()));
+        
+        assertThat("Postcondition: should store all messages",
+                collector.getAllMessages(), is(Arrays.asList(
+                        new ResultMessage("javac", MessageType.ERROR, "abc")
+                )));
+        
+        collector.addMessage(new ResultMessage("checkstyle", MessageType.WARNING, "def"), s2);
+        
+        assertThat("Postcondition: collector should store for correct exercise",
+                collector.getMessageForSubmission(s1), is(Arrays.asList(
+                        new ResultMessage("javac", MessageType.ERROR, "abc")
+                )));
+        assertThat("Postcondition: collector should store for correct exercise",
+                collector.getMessageForSubmission(s2), is(Arrays.asList(
+                        new ResultMessage("checkstyle", MessageType.WARNING, "def")
+                )));
+        
+        assertThat("Postcondition: should store all messages",
+                collector.getAllMessages(), is(Arrays.asList(
+                        new ResultMessage("javac", MessageType.ERROR, "abc"),
+                        new ResultMessage("checkstyle", MessageType.WARNING, "def")
+                )));
+        
+        collector.addMessage(new ResultMessage("encoding", MessageType.ERROR, "Invalid Encoding"), s1);
+        
+        assertThat("Postcondition: collector should store for correct exercise",
+                collector.getMessageForSubmission(s1), is(Arrays.asList(
+                        new ResultMessage("javac", MessageType.ERROR, "abc"),
+                        new ResultMessage("encoding", MessageType.ERROR, "Invalid Encoding")
+                )));
+        assertThat("Postcondition: collector should store for correct exercise",
+                collector.getMessageForSubmission(s2), is(Arrays.asList(
+                        new ResultMessage("checkstyle", MessageType.WARNING, "def")
+                )));
+        
+        assertThat("Postcondition: should store all messages",
+                collector.getAllMessages(), is(Arrays.asList(
+                        new ResultMessage("javac", MessageType.ERROR, "abc"),
+                        new ResultMessage("checkstyle", MessageType.WARNING, "def"),
+                        new ResultMessage("encoding", MessageType.ERROR, "Invalid Encoding")
+                )));
+        
     }
     
 }

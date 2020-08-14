@@ -114,7 +114,7 @@ public class SubmissionHookIT {
         assertThat("Postcondition: execution should not be successful",
                 hook.getResultCollector().getAllSuccessful(), is(false));
         assertThat("Postcondition: collector should have correct messages",
-                hook.getResultCollector().getMessages(), is(Arrays.asList(
+                hook.getResultCollector().getAllMessages(), is(Arrays.asList(
                         new ResultMessage("eclipse-configuration", MessageType.ERROR, "Does not contain a valid eclipse project"),
                         new ResultMessage("eclipse-configuration", MessageType.ERROR, "Does not contain a valid eclipse project")
                 )));
@@ -138,7 +138,7 @@ public class SubmissionHookIT {
         assertThat("Postcondition: execution should be successful",
                 hook.getResultCollector().getAllSuccessful(), is(false));
         assertThat("Postcondition: collector should have not messages",
-                hook.getResultCollector().getMessages(), is(Arrays.asList(
+                hook.getResultCollector().getAllMessages(), is(Arrays.asList(
                         new ResultMessage("eclipse-configuration", MessageType.ERROR, "Does not contain a valid eclipse project")
                 )));
     }
@@ -161,7 +161,7 @@ public class SubmissionHookIT {
         assertThat("Postcondition: execution should not be successful",
                 hook.getResultCollector().getAllSuccessful(), is(false));
         assertThat("Postcondition: collector should have correct messages",
-                hook.getResultCollector().getMessages(), is(Arrays.asList(
+                hook.getResultCollector().getAllMessages(), is(Arrays.asList(
                         new ResultMessage("javac", MessageType.ERROR, "';' expected").setFile(new File("Main.java")).setLine(4).setColumn(51)
                 )));
     }
@@ -184,7 +184,7 @@ public class SubmissionHookIT {
         assertThat("Postcondition: execution should not be successful",
                 hook.getResultCollector().getAllSuccessful(), is(false));
         assertThat("Postcondition: collector should have correct messages",
-                hook.getResultCollector().getMessages(), is(Arrays.asList(
+                hook.getResultCollector().getAllMessages(), is(Arrays.asList(
                         new ResultMessage("checkstyle", MessageType.ERROR, "File contains tab characters (this is the first instance)")
                                 .setFile(new File("Main.java")).setLine(3).setColumn(1),
                         new ResultMessage("checkstyle", MessageType.ERROR, "'method def modifier' has incorrect indentation level 8, expected level should be 4")
@@ -214,7 +214,7 @@ public class SubmissionHookIT {
         assertThat("Postcondition: execution should be successful",
                 hook.getResultCollector().getAllSuccessful(), is(true));
         assertThat("Postcondition: collector should have no messages",
-                hook.getResultCollector().getMessages(), is(Arrays.asList()));
+                hook.getResultCollector().getAllMessages(), is(Arrays.asList()));
     }
     
     @Test
@@ -321,7 +321,7 @@ public class SubmissionHookIT {
         assertThat("Postcondition: successful exit code should be 1",
                 exitCode, is(1));
         assertThat("Postcondition: should have correct error message",
-                hook.getResultCollector().getMessages(), is(Arrays.asList(
+                hook.getResultCollector().getAllMessages(), is(Arrays.asList(
                         new ResultMessage("hook", MessageType.ERROR, "An internal error occurred")
                 )));
             
