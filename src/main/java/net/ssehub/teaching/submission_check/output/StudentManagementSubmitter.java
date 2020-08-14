@@ -50,27 +50,24 @@ public class StudentManagementSubmitter {
      * Creates a new {@link StudentManagementSubmitter} instance to submit {@link ResultMessage}s
      * to the <b>Student Management Server</b>.
      * 
-     * @param authenticationURL The URL of the authentication server (aka Sparky service)
-     * @param stdMgmtURL The URL of the student management service
-     * @param courseName The course that is associated with the exercise submitter.
-     * @param semester The semester for which the submission shall be reviewed (in form of 4 letters and 4 digits)
-     * @param submissionServer The root (URL) where to submit assignments (exercises).
-     * @param userName The user name to submit the results
-     * @param password The password belonging to the user.
+     * @param configuration The configuration parameters for the communication with the student management system.
      * 
      * @throws UnknownCredentialsException If userName and password do not match to a valid (tutor)
      *     account on the server.
      * @throws ServerNotFoundException If one of the two servers is unreachable by the specified URLs.
      */
-    //checkstyle: stop parameter number check
-    public StudentManagementSubmitter(String authenticationURL, String stdMgmtURL, String courseName, String semester,
-            String submissionServer, String userName, String password)
+    public StudentManagementSubmitter(StudentManagementConfig configuration)
             throws UnknownCredentialsException, ServerNotFoundException {
-    //checkstyle: resume parameter number check
         
-        this(new SubmissionHookProtocol(authenticationURL, stdMgmtURL, courseName, submissionServer));
-        protocol.setSemester(semester);
-        protocol.login(userName, password);
+        this(new SubmissionHookProtocol(
+                configuration.getAuthenticationUrl(),
+                configuration.getStudentManagemenSystemtUrl(),
+                configuration.getCourseName(),
+                null // submission server is irrelevant
+        ));
+        
+        protocol.setSemester(configuration.getSemester());
+        protocol.login(configuration.getUserName(), configuration.getPassword());
     }
     
     
