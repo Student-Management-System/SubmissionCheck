@@ -22,8 +22,8 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -145,7 +145,7 @@ public class XmlOutputFormatterTest {
                 ));
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

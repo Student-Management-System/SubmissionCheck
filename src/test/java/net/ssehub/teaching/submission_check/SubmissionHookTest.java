@@ -20,6 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,8 +30,8 @@ import java.util.HashSet;
 import java.util.logging.SimpleFormatter;
 import java.util.logging.StreamHandler;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.svn.MockSvnInterface;
 import net.ssehub.teaching.submission_check.svn.SvnException;
@@ -43,24 +44,32 @@ public class SubmissionHookTest {
 
     private static final File TESTDATA = new File("src/test/resources/SubmissionHookTest");
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void tooFewArguments() {
-        new SubmissionHook(new String[] {"a", "b"}, new MockSvnInterface());
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SubmissionHook(new String[] {"a", "b"}, new MockSvnInterface());
+        });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void tooManyArguments() {
-        new SubmissionHook(new String[] {"a", "b", "c", "d"}, new MockSvnInterface());
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SubmissionHook(new String[] {"a", "b", "c", "d"}, new MockSvnInterface());
+        });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void invalidPhase() {
-        new SubmissionHook(new String[] {"invalid", TESTDATA.getAbsolutePath(), "42"}, new MockSvnInterface());
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SubmissionHook(new String[] {"invalid", TESTDATA.getAbsolutePath(), "42"}, new MockSvnInterface());
+        });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void nonExistingRepository() {
-        new SubmissionHook(new String[] {"PRE", new File(TESTDATA, "doesnt_exist").getAbsolutePath(), "42"}, new MockSvnInterface());
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SubmissionHook(new String[] {"PRE", new File(TESTDATA, "doesnt_exist").getAbsolutePath(), "42"}, new MockSvnInterface());
+        });
     }
     
     @Test
@@ -246,7 +255,7 @@ public class SubmissionHookTest {
         }
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

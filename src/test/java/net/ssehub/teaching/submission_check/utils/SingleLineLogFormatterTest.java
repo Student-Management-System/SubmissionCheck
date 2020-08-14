@@ -30,9 +30,9 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.svn.SvnException;
 
@@ -44,7 +44,7 @@ public class SingleLineLogFormatterTest {
     
     private StreamHandler streamHandler;
     
-    @Before
+    @BeforeEach
     public void setupTestLogger() throws SecurityException, UnsupportedEncodingException {
         testLogger = Logger.getLogger(SingleLineLogFormatterTest.class.getName());
         testLogger.setUseParentHandlers(false);
@@ -58,7 +58,7 @@ public class SingleLineLogFormatterTest {
         testLogger.addHandler(streamHandler);
     }
     
-    @After
+    @AfterEach
     public void closeStreamHandler() {
         streamHandler.close();
     }

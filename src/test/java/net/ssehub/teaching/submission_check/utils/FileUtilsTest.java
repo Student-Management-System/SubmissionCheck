@@ -18,7 +18,8 @@ package net.ssehub.teaching.submission_check.utils;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,9 +29,8 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashSet;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -197,31 +197,39 @@ public class FileUtilsTest {
                 is(new File("nested/file.txt")));
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void relativizeThrowsIfDirAbsoluteAndFileRelative() {
+        assertThrows(IllegalArgumentException.class, () -> {
             FileUtils.getRelativeFile(new File("/some/dir/"), new File("some/dir/nested/file.txt"));
+        });
     }
     
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void relativizeThrowsIfDirRelativeAndFileAbsolute() {
-        FileUtils.getRelativeFile(new File("some/dir/"), new File("/some/dir/nested/file.txt"));
+        assertThrows(IllegalArgumentException.class, () -> {
+            FileUtils.getRelativeFile(new File("some/dir/"), new File("/some/dir/nested/file.txt"));
+        });
     }
     
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void fileSizeOnDirectory() throws IOException {
         assertThat("Precondition: test directory should exist",
                 TESTDATA.isDirectory(), is(true));
         
-        FileUtils.getFileSize(TESTDATA);
+        assertThrows(FileNotFoundException.class, () -> {
+            FileUtils.getFileSize(TESTDATA);
+        });
     }
     
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void fileSizeOnNotExistingFile() throws IOException {
         File file = new File(TESTDATA, "doesnt_exist");
         assertThat("Precondition: test file should not exist",
                 file.exists(), is(false));
         
-        FileUtils.getFileSize(file);
+        assertThrows(FileNotFoundException.class, () -> {
+            FileUtils.getFileSize(file);
+        });
     }
     
     @Test
@@ -290,13 +298,15 @@ public class FileUtilsTest {
         }
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void deleteFileNotExisting() throws IOException {
         File file = new File(TESTDATA, "doesnt_exit");
         assertThat("Precondition: test file should not exist",
                 file.exists(), is(false));
         
-        FileUtils.deleteFile(file);
+        assertThrows(IOException.class, () -> {
+            FileUtils.deleteFile(file);
+        });
     }
     
     @Test
@@ -336,7 +346,7 @@ public class FileUtilsTest {
         }
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void deleteFileNonEmptyDirectory() throws IOException {
         File directory = new File(TESTDATA, "singleFile");
         assertThat("Precondition: test directory should exist",
@@ -345,7 +355,9 @@ public class FileUtilsTest {
         assertThat("Precondition: test directory should not be empty",
                 directory.listFiles().length, not(is(0)));
         
-        FileUtils.deleteFile(directory);
+        assertThrows(IOException.class, () -> {
+            FileUtils.deleteFile(directory);
+        });
     }
     
     @Test
@@ -410,22 +422,26 @@ public class FileUtilsTest {
         }
     }
     
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void parseXmlNonExistingFile() throws IOException, SAXException {
         File file = new File(TESTDATA, "doesnt_exist.xml");
         assertThat("Precondition: test file should not exist",
                 file.exists(), is(false));
         
-        FileUtils.parseXml(file);
+        assertThrows(FileNotFoundException.class, () -> {
+            FileUtils.parseXml(file);
+        });
     }
     
-    @Test(expected = SAXException.class)
+    @Test
     public void parseInvalidXml() throws IOException, SAXException {
         File file = new File(TESTDATA, "invalid.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        FileUtils.parseXml(file);
+        assertThrows(SAXException.class, () -> {
+            FileUtils.parseXml(file);
+        });
     }
     
     @Test
@@ -451,36 +467,41 @@ public class FileUtilsTest {
         assertThat(textNode.getTextContent(), is("text"));
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void parseXmlIoException() throws IOException, SAXException {
         File file = new File(TESTDATA, "valid.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        try {
-        	FileUtilsTest.setRigFileOperationsToFail(true);
+        FileUtilsTest.setRigFileOperationsToFail(true);
+        
+        assertThrows(IOException.class, () -> {
             FileUtils.parseXml(file);
-        } finally {
-        	FileUtilsTest.setRigFileOperationsToFail(false);
-        }
+        });
+        
+        FileUtilsTest.setRigFileOperationsToFail(false);
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void deleteNonExistingDirecotry() throws IOException {
         File file = new File(TESTDATA, "doesnt_exist");
         assertThat("Precondition: test file should not exist",
                 file.exists(), is(false));
         
-        FileUtils.deleteDirectory(file);
+        assertThrows(IOException.class, () -> {
+            FileUtils.deleteDirectory(file);
+        });
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void deleteDirectoryOnFile() throws IOException {
         File file = new File(TESTDATA, "100bytes.txt");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        FileUtils.deleteDirectory(file);
+        assertThrows(IOException.class, () -> {
+            FileUtils.deleteDirectory(file);
+        });
     }
     
     @Test
@@ -544,7 +565,7 @@ public class FileUtilsTest {
                 directory.exists(), is(false));
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void deleteDirectoryCantDeleteFile() throws IOException {
         File directory = new File(TESTDATA, "singleFile");
         assertThat("Precondition: directory should exist",
@@ -556,13 +577,13 @@ public class FileUtilsTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        try {
-            setRigFileOperationsToFail(true);
+        setRigFileOperationsToFail(true);
+        
+        assertThrows(IOException.class, () -> {
             FileUtils.deleteDirectory(directory);
-            
-        } finally {
-        	setRigFileOperationsToFail(false);
-        }
+        });
+        
+        setRigFileOperationsToFail(false);
     }
     
     @Test
@@ -663,18 +684,18 @@ public class FileUtilsTest {
                 nested.isFile(), is(true));
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void createEmptyDirectory() {
         File directory = new File(TESTDATA, "emptyDirectory");
         if (!directory.isDirectory()) {
             boolean created = directory.mkdir();
             if (!created) {
-                Assert.fail("Setup: Could not create empty test directory " + directory.getPath());
+                fail("Setup: Could not create empty test directory " + directory.getPath());
             }
         }
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

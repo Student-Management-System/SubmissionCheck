@@ -17,115 +17,138 @@ package net.ssehub.teaching.submission_check.eclipse_config;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class EclipseProjectFileTest {
     
     private static final File TESTDATA = new File("src/test/resources/EclipseProjectFileTest");
 
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void notExistingFile() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "doesnt_exist");
         assertThat("Precondition: test file should not exist",
                 file.exists(), is(false));
         
-        new EclipseProjectFile(file);
+        assertThrows(FileNotFoundException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void invalidXml() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "invalidXml.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void invalidRoot() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "invalidRoot.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void missingName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "missingName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void missingBuildSpec() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "missingBuildSpec.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void missingNatures() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "missingNatures.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void doubleName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "doubleName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void doubleBuildSpec() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "doubleBuildSpec.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void doubleNatures() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "doubleNatures.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void invalidName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "invalidName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void emptyName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "emptyName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
     @Test
@@ -163,40 +186,48 @@ public class EclipseProjectFileTest {
                 result.getNatures(), is(Arrays.asList()));
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void invalidBuildSpec() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "invalidBuildSpec.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void buildCommandMissingName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "buildCommandMissingName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void buildCommandDoubleName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "buildCommandDoubleName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
-        
-        new EclipseProjectFile(file);
+
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void buildCommandInvalidName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "buildCommandInvalidName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
-        
-        new EclipseProjectFile(file);
+
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
     @Test
@@ -216,22 +247,26 @@ public class EclipseProjectFileTest {
                 result.getBuilders(), is(Arrays.asList()));
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void invalidNatures() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "invalidNatures.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        new EclipseProjectFile(file);
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
-    @Test(expected = InvalidEclipseConfigException.class)
+    @Test
     public void naturesInvalidName() throws InvalidEclipseConfigException, IOException {
         File file = new File(TESTDATA, "naturesInvalidName.xml");
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
-        
-        new EclipseProjectFile(file);
+
+        assertThrows(InvalidEclipseConfigException.class, () -> {
+            new EclipseProjectFile(file);
+        });
     }
     
     @Test

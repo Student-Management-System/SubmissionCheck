@@ -18,8 +18,7 @@ package net.ssehub.teaching.submission_check.svn;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assume.assumeThat;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,31 +32,31 @@ import java.util.HashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import net.ssehub.teaching.submission_check.Submission;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
 import net.ssehub.teaching.submission_check.utils.FileUtils;
 import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
+@EnabledIf("checkSvnlookInstalled")
 public class CliSvnInterfaceIT {
 
     private static final File TESTDATA = new File("src/test/resources/CliSvnInterfaceIT");
     
-    @BeforeClass
-    public static void checkSvnlookInstalled() {
+    public static boolean checkSvnlookInstalled() {
         ProcessBuilder pb = new ProcessBuilder("svnlook", "help");
         pb.redirectOutput(Redirect.DISCARD);
         pb.redirectError(Redirect.DISCARD);
         
+        int result = -1;
         try {
-            int result = pb.start().waitFor();
-            assumeThat("Precondition: svnlook should be installed in PATH",
-                    result, is(0));
-        } catch (IOException | InterruptedException e) {
-            assumeTrue("Precondition: svnlook should be installed in PATH", false);
-        }
+            result = pb.start().waitFor();
+        } catch (InterruptedException | IOException e) {}
+        
+        return result == 0;
     }
     
     @Test
@@ -75,20 +74,24 @@ public class CliSvnInterfaceIT {
                 info.getAuthor(), is("secondAuthor"));
     }
     
-    @Test(expected = SvnException.class)
+    @Test
     public void postInvalidRepo() throws IOException, SvnException {
         CliSvnInterface svn = new CliSvnInterface();
         
-        svn.createTransactionInfo(Phase.POST_COMMIT, TESTDATA, "1");
+        assertThrows(SvnException.class, () -> {
+            svn.createTransactionInfo(Phase.POST_COMMIT, TESTDATA, "1");
+        });
     }
     
-    @Test(expected = SvnException.class)
+    @Test
     public void postInvalidRevision() throws IOException, SvnException {
         File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repoWithTwoCommits.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
-        svn.createTransactionInfo(Phase.POST_COMMIT, repo, "15");
+        assertThrows(SvnException.class, () -> {
+            svn.createTransactionInfo(Phase.POST_COMMIT, repo, "15");
+        });
     }
     
     @Test
@@ -102,20 +105,24 @@ public class CliSvnInterfaceIT {
                 info.getAuthor(), is("someThirdAuthor"));
     }
     
-    @Test(expected = SvnException.class)
+    @Test
     public void preInvalidRepo() throws IOException, SvnException {
         CliSvnInterface svn = new CliSvnInterface();
         
-        svn.createTransactionInfo(Phase.PRE_COMMIT, TESTDATA, "1");
+        assertThrows(SvnException.class, () -> {
+            svn.createTransactionInfo(Phase.PRE_COMMIT, TESTDATA, "1");
+        });
     }
     
-    @Test(expected = SvnException.class)
+    @Test
     public void preInvalidTransaction() throws IOException, SvnException {
         File repo = prepareTestdataSvnRepo(new File(TESTDATA, "repoInTransaction_2-2.zip"));
         
         CliSvnInterface svn = new CliSvnInterface();
         
-        svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "2-3");
+        assertThrows(SvnException.class, () -> {
+            svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "2-3");
+        });
     }
     
     @Test
@@ -393,7 +400,7 @@ public class CliSvnInterfaceIT {
         return directory;
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

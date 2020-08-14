@@ -22,8 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -245,7 +245,7 @@ public class EclipseConfigCheckTest {
         assertThat(check.getRequireCheckstyleProject(), is(true));
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

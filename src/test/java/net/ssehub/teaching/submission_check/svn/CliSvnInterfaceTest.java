@@ -17,7 +17,8 @@ package net.ssehub.teaching.submission_check.svn;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -33,8 +34,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.Submission;
 import net.ssehub.teaching.submission_check.svn.TransactionInfo.Phase;
@@ -72,14 +73,16 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 info, is(new TransactionInfo(TESTDATA, "someauthor", "42-g", Phase.PRE_COMMIT)));
     }
     
-    @Test(expected = SvnException.class)    
+    @Test
     public void authorInvalid() throws SvnException {
         author = "otherauthor";
         createWrongAuthor = true;
 
         expectedTransactionInfo = new TransactionInfo(TESTDATA, null, "42-g", Phase.PRE_COMMIT);
         
-        this.createTransactionInfo(Phase.PRE_COMMIT, TESTDATA, "42-g");
+        assertThrows(SvnException.class, () -> {
+            this.createTransactionInfo(Phase.PRE_COMMIT, TESTDATA, "42-g");
+        });
     }
     
     @Test
@@ -171,7 +174,7 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 getModifiedSubmissions(info), is(new HashSet<>()));
     }
     
-    @Test(expected = SvnException.class)
+    @Test
     public void modifiedSubmissionsEmptyLine() throws SvnException {
         TransactionInfo info = new TransactionInfo(TESTDATA, "other", "42-g", Phase.POST_COMMIT);
         expectedTransactionInfo = info;
@@ -181,10 +184,12 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 "",
         };
         
-        getModifiedSubmissions(info);
+        assertThrows(SvnException.class, () -> {
+            getModifiedSubmissions(info);
+        });
     }
     
-    @Test(expected = SvnException.class)
+    @Test
     public void modifiedSubmissionsInvalidChangeChar() throws SvnException {
         TransactionInfo info = new TransactionInfo(TESTDATA, "other", "42-g", Phase.POST_COMMIT);
         expectedTransactionInfo = info;
@@ -193,7 +198,9 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 "X Exercise01/something"
         };
         
-        getModifiedSubmissions(info);
+        assertThrows(SvnException.class, () -> {
+            getModifiedSubmissions(info);
+        });
     }
     
     @Test
@@ -343,7 +350,7 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
         }
     }
     
-    @Test(expected = IOException.class)
+    @Test
     public void checkoutSubmissionInvalidDirectory() throws SvnException, IOException {
         File targetDirecoty = new File(TESTDATA, "checkout");
         targetDirecoty.mkdir();
@@ -360,7 +367,9 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 "Exercise01/Group06/dir/file.txt"
         ));
         
-        checkoutSubmission(info, new Submission("Exercise01", "Group06"), targetDirecoty);
+        assertThrows(IOException.class, () -> {
+            checkoutSubmission(info, new Submission("Exercise01", "Group06"), targetDirecoty);
+        });
     }
     
     @Test
@@ -467,7 +476,7 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
         return output;
     }
     
-    @After
+    @AfterEach
     public void cleanCheckoutDirectory() throws IOException {
         File checkout = new File(TESTDATA, "checkout");
         if (checkout.isDirectory()) {

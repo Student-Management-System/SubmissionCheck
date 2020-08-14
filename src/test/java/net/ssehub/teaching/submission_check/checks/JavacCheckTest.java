@@ -18,7 +18,7 @@ package net.ssehub.teaching.submission_check.checks;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,9 +28,9 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.After;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -522,7 +522,7 @@ public abstract class JavacCheckTest {
     
     // TODO: create a test for an error with a file but without a line number
     
-    @BeforeClass
+    @BeforeAll
     public static void checkJavacInstallation() throws InterruptedException, IOException {
         ProcessBuilder command = new ProcessBuilder("javac", "-version");
         command.redirectError(Redirect.DISCARD);
@@ -534,7 +534,7 @@ public abstract class JavacCheckTest {
                 exitStatus, is(0));
     }
     
-    @After
+    @AfterEach
     public void cleanup() {
         if (testDirecotry != null && testDirecotry.isDirectory()) {
             removeClassFiles(testDirecotry);

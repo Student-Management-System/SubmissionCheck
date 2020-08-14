@@ -17,15 +17,15 @@ package net.ssehub.teaching.submission_check.checks;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -184,18 +184,18 @@ public class EncodingCheckTest {
         assertThat(check.getWantedCharset(), is(StandardCharsets.ISO_8859_1));
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void createEmptyDirectory() {
         File directory = new File(TESTDATA, "emptyDirectory");
         if (!directory.isDirectory()) {
             boolean created = directory.mkdir();
             if (!created) {
-                Assert.fail("Setup: Could not create empty test directory " + directory.getPath());
+                fail("Setup: Could not create empty test directory " + directory.getPath());
             }
         }
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

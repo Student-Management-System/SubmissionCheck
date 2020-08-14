@@ -23,8 +23,8 @@ import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -334,7 +334,7 @@ public class CheckstyleCheckTest {
         assertThat(check.getCheckstyleRules(), is(new File("something/else.xml")));
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void checkRulesExist() {
         assertThat("Precondition: Checkstyle beginners rule file should exist (" + BEGINNERS_RULES + ")",
                 BEGINNERS_RULES.isFile());
@@ -361,7 +361,7 @@ public class CheckstyleCheckTest {
                 INVALID_RULES.isFile());
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

@@ -15,11 +15,14 @@
  */
 package net.ssehub.teaching.submission_check.output;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.Arrays;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.exercisesubmitter.protocol.backend.DataNotFoundException;
 import net.ssehub.exercisesubmitter.protocol.backend.NetworkException;
@@ -40,6 +43,7 @@ import net.ssehub.teaching.submission_check.Submission;
  * @author El-Sharkawy
  */
 public class StudentManagementSubmitterTest {
+    
     private static class MockSubmissionHookProtocol extends SubmissionHookProtocol {
 
         private Assignment assignment;
@@ -83,14 +87,14 @@ public class StudentManagementSubmitterTest {
         ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
         
         // Check that submission was successful
-        Assert.assertTrue(submitter.submit(submission, Arrays.asList(msg)));
+        assertTrue(submitter.submit(submission, Arrays.asList(msg)));
         
         // Check that expected data was submitted
-        Assert.assertEquals(1, protocol.assessment.partialAsssesmentSize());
+        assertEquals(1, protocol.assessment.partialAsssesmentSize());
         PartialAssessmentDto partial = protocol.assessment.getPartialAssessment(0);
-        Assert.assertEquals(msg.getCheckName(), partial.getType());
-        Assert.assertEquals(msg.getType().name(), partial.getSeverity().name());
-        Assert.assertEquals(msg.getMessage(), partial.getComment());
+        assertEquals(msg.getCheckName(), partial.getType());
+        assertEquals(msg.getType().name(), partial.getSeverity().name());
+        assertEquals(msg.getMessage(), partial.getComment());
     }
     
     @Test
@@ -104,18 +108,18 @@ public class StudentManagementSubmitterTest {
         msg.setLine(1);
         
         // Check that submission was successful
-        Assert.assertTrue(submitter.submit(submission, Arrays.asList(msg)));
+        assertTrue(submitter.submit(submission, Arrays.asList(msg)));
         
         // Check that expected data was submitted
-        Assert.assertEquals(1, protocol.assessment.partialAsssesmentSize());
+        assertEquals(1, protocol.assessment.partialAsssesmentSize());
         PartialAssessmentDto partial = protocol.assessment.getPartialAssessment(0);
-        Assert.assertEquals(msg.getCheckName(), partial.getType());
-        Assert.assertEquals(msg.getType().name(), partial.getSeverity().name());
-        Assert.assertEquals(msg.getMessage(), partial.getComment());
+        assertEquals(msg.getCheckName(), partial.getType());
+        assertEquals(msg.getType().name(), partial.getSeverity().name());
+        assertEquals(msg.getMessage(), partial.getComment());
         // TODO SE: Currently not fully supported by the student management server
     }
     
-    @Test(expected = DataNotFoundException.class)
+    @Test
     public void invalidAssignment() throws NetworkException {
         MockSubmissionHookProtocol protocol = new MockSubmissionHookProtocol() {
             @Override
@@ -127,7 +131,10 @@ public class StudentManagementSubmitterTest {
         StudentManagementSubmitter submitter = new StudentManagementSubmitter(protocol);
         Submission submission = new Submission("exercise", "auser");
         ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
-        submitter.submit(submission, Arrays.asList(msg));
+        
+        assertThrows(DataNotFoundException.class, () -> {
+            submitter.submit(submission, Arrays.asList(msg));
+        });
     }
     
 }

@@ -35,8 +35,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class LoggingSetupTest {
 
@@ -318,7 +318,7 @@ public class LoggingSetupTest {
         }
     }
     
-    @Before
+    @BeforeEach
     public void removeRootLoggerHandlers() {
         for (Handler handler : ROOT_LOGGER.getHandlers()) {
             ROOT_LOGGER.removeHandler(handler);

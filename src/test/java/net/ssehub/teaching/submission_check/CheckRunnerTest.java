@@ -21,9 +21,9 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import java.io.File;
 import java.util.Arrays;
 
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.checks.MockCheck;
@@ -35,7 +35,7 @@ public class CheckRunnerTest {
     
     private ResultCollector collector;
     
-    @Before
+    @BeforeEach
     public void initRunner() {
         this.collector = new ResultCollector();
         this.runner = new CheckRunner(collector);
@@ -298,7 +298,7 @@ public class CheckRunnerTest {
     }
     
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

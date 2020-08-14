@@ -19,6 +19,7 @@ import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,8 +29,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.checks.Check;
 import net.ssehub.teaching.submission_check.checks.CheckstyleCheck;
@@ -47,13 +48,15 @@ public class ConfigurationTest {
 
     private static final File TESTDATA = new File("src/test/resources/ConfigurationTest");
     
-    @Test(expected = FileNotFoundException.class)
+    @Test
     public void invalidConfigurationFile() throws IOException {
         File configFile = new File(TESTDATA, "doesnt_exist");
         assertThat("Precondition: test file should not exist",
                 configFile.exists(), is(false));
         
-        new Configuration(configFile);
+        assertThrows(FileNotFoundException.class, () -> {
+            new Configuration(configFile);
+        });
     }
     
     @Test
@@ -179,7 +182,7 @@ public class ConfigurationTest {
                 config.getUnrestrictedUsers(), is(new HashSet<>(Arrays.asList("admin", "tutor01", "tutor02"))));
     }
     
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void unrestrictedUsersReadOnly() throws IOException {
         File configFile = new File(TESTDATA, "empty.properties");
         assertThat("Precondition: test file should exist",
@@ -187,7 +190,9 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.getUnrestrictedUsers().add("something");
+        assertThrows(UnsupportedOperationException.class, () -> {
+            config.getUnrestrictedUsers().add("something");
+        });
     }
     
     @Test
@@ -253,7 +258,7 @@ public class ConfigurationTest {
                 check.getMaxSubmissionSize(), is(10485760L));
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void fileSizeCheckInvalidFileSize() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "fileSizeCheckInvalidFile.properties");
         assertThat("Precondition: test file should exist",
@@ -261,10 +266,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createFileSizeCheck(new Submission("Exercise01", ""));
+        assertThrows(ConfigurationException.class, () -> {
+            config.createFileSizeCheck(new Submission("Exercise01", ""));
+        });
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void fileSizeCheckInvalidSubmissionsSize() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "fileSizeCheckInvalidSubmission.properties");
         assertThat("Precondition: test file should exist",
@@ -272,7 +279,9 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createFileSizeCheck(new Submission("Exercise01", ""));
+        assertThrows(ConfigurationException.class, () -> {
+            config.createFileSizeCheck(new Submission("Exercise01", ""));
+        });
     }
     
     @Test
@@ -302,7 +311,7 @@ public class ConfigurationTest {
         assertThat(check.getWantedCharset(), is(StandardCharsets.US_ASCII));
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void encodingCheckInvalid() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "encodingInvalid.properties");
         assertThat("Precondition: test file should exist",
@@ -310,7 +319,9 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createEncodingCheck(new Submission("Exercise01", ""));
+        assertThrows(ConfigurationException.class, () -> {
+            config.createEncodingCheck(new Submission("Exercise01", ""));
+        });
     }
     
     @Test
@@ -420,7 +431,7 @@ public class ConfigurationTest {
         assertThat(check.getClasspath(), is(Arrays.asList(new File("libs/libA.jar"), new File("libs/libB.jar"))));
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void javacCheckInvalidVersion() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "javacCheckInvalidVersion.properties");
         assertThat("Precondition: test file should exist",
@@ -428,10 +439,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createJavacCheck(new Submission("Exercise01", ""), false);
+        assertThrows(ConfigurationException.class, () -> {
+            config.createJavacCheck(new Submission("Exercise01", ""), false);
+        });
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void javacCheckInvalidEncoding() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "encodingInvalid.properties");
         assertThat("Precondition: test file should exist",
@@ -439,7 +452,9 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createJavacCheck(new Submission("Exercise01", ""), false);
+        assertThrows(ConfigurationException.class, () -> {
+            config.createJavacCheck(new Submission("Exercise01", ""), false);
+        });
     }
     
     @Test
@@ -476,7 +491,7 @@ public class ConfigurationTest {
                 check.getCharset(), is(StandardCharsets.ISO_8859_1));
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void checkstyelCheckMissingRulesFile() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "empty.properties");
         assertThat("Precondition: test file should exist",
@@ -484,10 +499,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createCheckstyleCheck(new Submission("Exercise01", ""));
+        assertThrows(ConfigurationException.class, () -> {
+            config.createCheckstyleCheck(new Submission("Exercise01", ""));
+        });
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void checkstyelCheckInvalidEncoding() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "checkstyleCheckInvalidEncoding.properties");
         assertThat("Precondition: test file should exist",
@@ -495,7 +512,9 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.createCheckstyleCheck(new Submission("Exercise01", ""));
+        assertThrows(ConfigurationException.class, () -> {
+            config.createCheckstyleCheck(new Submission("Exercise01", ""));
+        });
     }
     
     @Test
@@ -536,7 +555,7 @@ public class ConfigurationTest {
                 ((EclipseConfigCheck) checks.get(0)).getRequireJavaProject(), is(true));
     }
     
-    @Test(expected = ConfigurationException.class)
+    @Test
     public void studentManagementSystemConfigurationNotConfigured() throws IOException, ConfigurationException {
         File configFile = new File(TESTDATA, "empty.properties");
         assertThat("Precondition: test file should exist",
@@ -544,7 +563,9 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        config.getStudentManagementSystemConfiguration(new Submission("Exercise01", "Group01"));
+        assertThrows(ConfigurationException.class, () -> {
+            config.getStudentManagementSystemConfiguration(new Submission("Exercise01", "Group01"));
+        });
     }
     
     @Test
@@ -565,7 +586,7 @@ public class ConfigurationTest {
         assertThat(result.getAuthenticationPassword(), is("secret-password"));
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }

@@ -15,25 +15,20 @@
  */
 package net.ssehub.teaching.submission_check.checks;
 
-import static org.junit.Assume.assumeTrue;
-
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.condition.EnabledIf;
 
 import net.ssehub.teaching.submission_check.utils.LoggingSetup;
 
+@EnabledIf("net.ssehub.teaching.submission_check.checks.InternalJavacCheck#isSupported")
 public class InternalJavacCheckTest extends JavacCheckTest {
 
-    @BeforeClass
-    public static void checkIfSupported() {
-        assumeTrue(InternalJavacCheck.isSupported());
-    }
-    
     @Override
     protected JavacCheck creatInstance() {
         return new InternalJavacCheck();
     }
     
-    @BeforeClass
+    @BeforeAll
     public static void initLogger() {
         LoggingSetup.setupStdoutLogging();
     }
