@@ -214,4 +214,12 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>student-management-system-github</id>
+			<name>Student-Management-System GitHub Packages</name>
+			<url>https://maven.pkg.github.com/student-management-system/mavenpackages</url>
+		</repository>
+	</distributionManagement>
 </project>
