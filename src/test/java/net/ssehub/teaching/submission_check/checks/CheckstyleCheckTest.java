@@ -18,12 +18,14 @@ package net.ssehub.teaching.submission_check.checks;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
@@ -51,6 +53,7 @@ public class CheckstyleCheckTest {
     private static final File INVALID_RULES = new File(TESTDATA, "invalid_rules.xml");
     
     @Test
+    @DisplayName("succeeds on submission with no Java files")
     public void noJavaFiles() {
         File directory = new File(TESTDATA, "noJavaFiles");
         assertThat("Precondition: directory with test files does not exist",
@@ -61,14 +64,16 @@ public class CheckstyleCheckTest {
         assertThat("Precondition: should not have any result messages before the execution",
                 check.getResultMessages(), is(Arrays.asList()));
         
-        assertThat("Postcondition: running on no files should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any result messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("correctly formatted file should succeed")
     public void beginnersCorrect() {
         File directory = new File(TESTDATA, "beginnersCorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -78,15 +83,17 @@ public class CheckstyleCheckTest {
         
         assertThat("Precondition: should not have any result messages before the execution",
                 check.getResultMessages(), is(Arrays.asList()));
+
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: running on correct files should succeed",
-                check.run(directory), is(true));
-        
-        assertThat("Postcondition: should not create any result messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("incorrectly formatted file should not succeed")
     public void beginnersIncorrect() {
         File directory = new File(TESTDATA, "beginnersIncorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -97,20 +104,22 @@ public class CheckstyleCheckTest {
         assertThat("Precondition: should not have any result messages before the execution",
                 check.getResultMessages(), is(Arrays.asList()));
         
-        assertThat("Postcondition: running on incorrect files should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create result messages",
-                check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("checkstyle", MessageType.ERROR,
-                                "'method def' child has incorrect indentation level 6, expected level should be 8")
-                                .setFile(new File("HelloWorld.java")).setLine(4).setColumn(7),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "';' is preceded with whitespace")
-                                .setFile(new File("HelloWorld.java")).setLine(4).setColumn(42)
-                ));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create result messages", check.getResultMessages(), containsInAnyOrder(
+                    new ResultMessage("checkstyle", MessageType.ERROR,
+                            "'method def' child has incorrect indentation level 6, expected level should be 8")
+                            .setFile(new File("HelloWorld.java")).setLine(4).setColumn(7),
+                    new ResultMessage("checkstyle", MessageType.ERROR, "';' is preceded with whitespace")
+                            .setFile(new File("HelloWorld.java")).setLine(4).setColumn(42)
+                ))
+        );
     }
     
     @Test
+    @DisplayName("creates correct message for non-parseable Java file")
     public void notCompiling() {
         File directory = new File(TESTDATA, "notCompiling");
         assertThat("Precondition: directory with test files does not exist",
@@ -118,16 +127,18 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(BEGINNERS_RULES);
         
-        assertThat("Postcondition: running on not-compiling files should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create result message",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Checkstyle could not parse file").setFile(new File("HelloWorld.java"))
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create a result message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Checkstyle could not parse file").setFile(new File("HelloWorld.java"))
+                )))
+        );
     }
     
     @Test
+    @DisplayName("creates internal error message for non-existant rules file")
     public void notExistingCheckstyleRules() {
         File directory = new File(TESTDATA, "beginnersCorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -138,16 +149,18 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(rulesFile);
         
-        assertThat("Postcondition: running with non-existing Checkstyle rules should not succeed",
-                check.run(directory), is(false));
-
-        assertThat("Postcondition: should create result message",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running Checkstyle")
-                )));
+        boolean success = check.run(directory);
+        
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create a result message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running Checkstyle")
+                )))
+        );
     }
     
     @Test
+    @DisplayName("creates internal error message for invalid rules file")
     public void invalidCheckstyleRules() {
         File directory = new File(TESTDATA, "beginnersCorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -155,16 +168,18 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(INVALID_RULES);
         
-        assertThat("Postcondition: running on files with an invalid rules file should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create internal error message",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running Checkstyle")
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create a result message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("checkstyle", MessageType.ERROR, "An internal error occurred while running Checkstyle")
+                )))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed with Javadoc rules on beginners-formatted file")
     public void javadocOnBeginners() {
         File directory = new File(TESTDATA, "beginnersCorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -172,19 +187,21 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(JAVADOC_RULES);
         
-        assertThat("Postcondition: running javadoc rules on beginners files should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create result messages",
-                check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
-                            .setFile(new File("HelloWorld.java")).setLine(1).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
-                            .setFile(new File("HelloWorld.java")).setLine(3).setColumn(5)
-                ));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create result messages", check.getResultMessages(), containsInAnyOrder(
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
+                        .setFile(new File("HelloWorld.java")).setLine(1).setColumn(1),
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
+                        .setFile(new File("HelloWorld.java")).setLine(3).setColumn(5)
+                ))
+        );
     }
     
     @Test
+    @DisplayName("succeeds with OO rules on correctly formatted files in packages")
     public void ooOnPackages() {
         File directory = new File(TESTDATA, "packagesNoJavadoc");
         assertThat("Precondition: directory with test files does not exist",
@@ -192,14 +209,16 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(OO_RULES);
         
-        assertThat("Postcondition: running on correct files should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any result messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed with Javadoc rules on files in packages without Javadoc comments")
     public void javadocOnPackages() {
         File directory = new File(TESTDATA, "packagesNoJavadoc");
         assertThat("Precondition: directory with test files does not exist",
@@ -207,23 +226,25 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(JAVADOC_RULES);
         
-        assertThat("Postcondition: running on incorrect files should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any result messages",
-                check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
-                            .setFile(new File("main/Main.java")).setLine(5).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
-                            .setFile(new File("main/Main.java")).setLine(7).setColumn(5),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
-                            .setFile(new File("util/Util.java")).setLine(3).setColumn(1),
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
-                            .setFile(new File("util/Util.java")).setLine(5).setColumn(5)
-                ));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create result messages", check.getResultMessages(), containsInAnyOrder(
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
+                        .setFile(new File("main/Main.java")).setLine(5).setColumn(1),
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
+                        .setFile(new File("main/Main.java")).setLine(7).setColumn(5),
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
+                        .setFile(new File("util/Util.java")).setLine(3).setColumn(1),
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Missing a Javadoc comment")
+                        .setFile(new File("util/Util.java")).setLine(5).setColumn(5)
+                ))
+        );
     }
     
     @Test
+    @DisplayName("succeeds on correct UTF-8 encoded umlauts")
     public void utf8UmlautsCorrect() {
         File directory = new File(TESTDATA, "umlauts");
         assertThat("Precondition: directory with test files does not exist",
@@ -231,14 +252,16 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(UMLAUTS_ALLOWED);
         
-        assertThat("Postcondition: running on files with correct encoding should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any result messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed on umlauts in wrong encoding")
     public void iso88591UmlautsIncorrect() {
         File directory = new File(TESTDATA, "umlauts_ISO-8859-1");
         assertThat("Precondition: directory with test files does not exist",
@@ -246,16 +269,18 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(UMLAUTS_ALLOWED);
         
-        assertThat("Postcondition: running on files with incorrect encoding should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create result message",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.ERROR, "Checkstyle could not parse file").setFile(new File("Umlauts.java"))
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create a result message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("checkstyle", MessageType.ERROR, "Checkstyle could not parse file").setFile(new File("Umlauts.java"))
+                )))
+        );
     }
     
     @Test
+    @DisplayName("succeeds on correct ISO-8859-1 encoded umlauts")
     public void iso88591UmlautsCorrect() {
         File directory = new File(TESTDATA, "umlauts_ISO-8859-1");
         assertThat("Precondition: directory with test files does not exist",
@@ -264,14 +289,16 @@ public class CheckstyleCheckTest {
         CheckstyleCheck check = new CheckstyleCheck(UMLAUTS_ALLOWED);
         check.setCharset(StandardCharsets.ISO_8859_1);
         
-        assertThat("Postcondition: running on files with correct encoding should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any result messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("creates correct result message for check with warning severity")
     public void warningSeverity() {
         File directory = new File(TESTDATA, "modifierOrderIncorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -279,17 +306,19 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(MODIFIER_ORDER_WARNING);
         
-        assertThat("Postcondition: running on files with only warnings should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create warning messages",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("checkstyle", MessageType.WARNING, "'public' modifier out of order with the JLS suggestions")
-                                .setFile(new File("HelloWorld.java")).setLine(3).setColumn(12)
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should create a warning result message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("checkstyle", MessageType.WARNING, "'public' modifier out of order with the JLS suggestions")
+                        .setFile(new File("HelloWorld.java")).setLine(3).setColumn(12)
+                )))
+        );
     }
     
     @Test
+    @DisplayName("creates no result message for check with info severity")
     public void infoSeverity() {
         File directory = new File(TESTDATA, "modifierOrderIncorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -297,14 +326,16 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(MODIFIER_ORDER_INFO);
         
-        assertThat("Postcondition: running on files with only infos should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create info messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("creates no result message for check with ignore severity")
     public void ignoreSeverity() {
         File directory = new File(TESTDATA, "modifierOrderIncorrect");
         assertThat("Precondition: directory with test files does not exist",
@@ -312,14 +343,16 @@ public class CheckstyleCheckTest {
         
         CheckstyleCheck check = new CheckstyleCheck(MODIFIER_ORDER_IGNORE);
         
-        assertThat("Postcondition: running on files with only ignored messages should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any messages as they are ignored",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should not create any result messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("getters return previously set values")
     public void getters() {
         CheckstyleCheck check = new CheckstyleCheck(new File("abc.xml"));
         
@@ -336,29 +369,24 @@ public class CheckstyleCheckTest {
     
     @BeforeAll
     public static void checkRulesExist() {
-        assertThat("Precondition: Checkstyle beginners rule file should exist (" + BEGINNERS_RULES + ")",
-                BEGINNERS_RULES.isFile());
-        
-        assertThat("Precondition: Checkstyle OO rule file should exist (" + OO_RULES + ")",
-                OO_RULES.isFile());
-        
-        assertThat("Precondition: Checkstyle javadoc rule file should exist (" + JAVADOC_RULES + ")",
-                JAVADOC_RULES.isFile());
-        
-        assertThat("Precondition: Checkstyle umlauts rule file should exist (" + UMLAUTS_ALLOWED + ")",
-                UMLAUTS_ALLOWED.isFile());
-        
-        assertThat("Precondition: Checkstyle warning modifier order rule file should exist (" + MODIFIER_ORDER_WARNING + ")",
-                MODIFIER_ORDER_WARNING.isFile());
-        
-        assertThat("Precondition: Checkstyle info modifier order rule file should exist (" + MODIFIER_ORDER_INFO + ")",
-                MODIFIER_ORDER_INFO.isFile());
-        
-        assertThat("Precondition: Checkstyle ignore modifier order rule file should exist (" + MODIFIER_ORDER_IGNORE + ")",
-                MODIFIER_ORDER_IGNORE.isFile());
-        
-        assertThat("Precondition: Checkstyle invalid rule file should exist (" + INVALID_RULES + ")",
-                INVALID_RULES.isFile());
+        assertAll(
+            () -> assertThat("Precondition: Checkstyle beginners rule file should exist (" + BEGINNERS_RULES + ")",
+                    BEGINNERS_RULES.isFile()),
+            () ->  assertThat("Precondition: Checkstyle OO rule file should exist (" + OO_RULES + ")",
+                    OO_RULES.isFile()),
+            () -> assertThat("Precondition: Checkstyle javadoc rule file should exist (" + JAVADOC_RULES + ")",
+                    JAVADOC_RULES.isFile()),
+            () -> assertThat("Precondition: Checkstyle umlauts rule file should exist (" + UMLAUTS_ALLOWED + ")",
+                    UMLAUTS_ALLOWED.isFile()),
+            () -> assertThat("Precondition: Checkstyle warning modifier order rule file should exist (" + MODIFIER_ORDER_WARNING + ")",
+                    MODIFIER_ORDER_WARNING.isFile()),
+            () -> assertThat("Precondition: Checkstyle info modifier order rule file should exist (" + MODIFIER_ORDER_INFO + ")",
+                    MODIFIER_ORDER_INFO.isFile()),
+            () -> assertThat("Precondition: Checkstyle ignore modifier order rule file should exist (" + MODIFIER_ORDER_IGNORE + ")",
+                    MODIFIER_ORDER_IGNORE.isFile()),
+            () -> assertThat("Precondition: Checkstyle invalid rule file should exist (" + INVALID_RULES + ")",
+                    INVALID_RULES.isFile())
+        );
     }
     
     @BeforeAll
