@@ -18,12 +18,14 @@ package net.ssehub.teaching.submission_check.checks;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsIterableContainingInAnyOrder.containsInAnyOrder;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
@@ -35,6 +37,7 @@ public class FileSizeCheckTest {
     private static final File TESTDATA = new File("src/test/resources/FileSizeCheckTest");
     
     @Test
+    @DisplayName("succeeds on empty directory")
     public void emptyDirectory() {
         File directory = new File(TESTDATA, "emptyDirectory");
         assertThat("Precondition: directory with test files should exist",
@@ -42,14 +45,16 @@ public class FileSizeCheckTest {
         
         FileSizeCheck check = new FileSizeCheck();
         
-        assertThat("Postcondition: run on an empty directory should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should create no messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("succeeds on single file that holds the file-size limit")
     public void sinlgeFileLimitHeld() {
         File directory = new File(TESTDATA, "singleFile100Bytes");
         assertThat("Precondition: directory with test files should exist",
@@ -58,14 +63,16 @@ public class FileSizeCheckTest {
         FileSizeCheck check = new FileSizeCheck();
         check.setMaxFileSize(100);
         
-        assertThat("Postcondition: run with no violations should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should create no messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed on single file that breaks the file-size limit")
     public void sinlgeFileLimitViolated() {
         File directory = new File(TESTDATA, "singleFile100Bytes");
         assertThat("Precondition: directory with test files should exist",
@@ -74,16 +81,18 @@ public class FileSizeCheckTest {
         FileSizeCheck check = new FileSizeCheck();
         check.setMaxFileSize(99);
         
-        assertThat("Postcondition: run with violations should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create error message",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("100bytes.txt"))
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create an error message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("100bytes.txt"))
+                )))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed with a single file that is larger than the submission-size limit")
     public void submissionSizeLimitViolatedBySingleFile() {
         File directory = new File(TESTDATA, "singleFile100Bytes");
         assertThat("Precondition: directory with test files should exist",
@@ -92,16 +101,18 @@ public class FileSizeCheckTest {
         FileSizeCheck check = new FileSizeCheck();
         check.setMaxSubmissionSize(99);
         
-        assertThat("Postcondition: run with violations should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create error message",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("file-size", MessageType.ERROR, "Submission size is too large")
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create an error message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("file-size", MessageType.ERROR, "Submission size is too large")
+                )))
+        );
     }
     
     @Test
+    @DisplayName("succeeds on multiple files that hold the file-size limit")
     public void multipleFileLimitsHeld() {
         File directory = new File(TESTDATA, "multipleFiles");
         assertThat("Precondition: directory with test files should exist",
@@ -110,14 +121,16 @@ public class FileSizeCheckTest {
         FileSizeCheck check = new FileSizeCheck();
         check.setMaxFileSize(200);
         
-        assertThat("Postcondition: run with no violations should succeed",
-                check.run(directory), is(true));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should not create any messages",
-                check.getResultMessages(), is(Arrays.asList()));
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should create no messages", check.getResultMessages(), is(Arrays.asList()))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed with multiple files breaking the file-size limit")
     public void multipleFileLimitsViolated() {
         File directory = new File(TESTDATA, "multipleFiles");
         assertThat("Precondition: directory with test files should exist",
@@ -126,17 +139,19 @@ public class FileSizeCheckTest {
         FileSizeCheck check = new FileSizeCheck();
         check.setMaxFileSize(99);
         
-        assertThat("Postcondition: run with violations should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create error messages for each violation",
-                check.getResultMessages(), containsInAnyOrder(
-                        new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("100bytes.txt")),
-                        new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("200bytes.txt"))
-                ));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create a error messages", check.getResultMessages(), containsInAnyOrder(
+                    new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("100bytes.txt")),
+                    new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("200bytes.txt"))
+                ))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed with some of the submitted files breaking the file-size limit")
     public void multipleFileLimitsSomeViolated() {
         File directory = new File(TESTDATA, "multipleFiles");
         assertThat("Precondition: directory with test files should exist",
@@ -145,16 +160,18 @@ public class FileSizeCheckTest {
         FileSizeCheck check = new FileSizeCheck();
         check.setMaxFileSize(150);
         
-        assertThat("Postcondition: run with violations should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create error message for violation",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("200bytes.txt"))
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create an error message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("file-size", MessageType.ERROR, "File is too large").setFile(new File("200bytes.txt"))
+                )))
+        );
     }
     
     @Test
+    @DisplayName("does not succeed with multiple files adding up to more than the submission-size limit")
     public void multipleFilesSubmissionTooLarge() {
         File directory = new File(TESTDATA, "multipleFiles");
         assertThat("Precondition: directory with test files should exist",
@@ -164,30 +181,33 @@ public class FileSizeCheckTest {
         check.setMaxFileSize(200);
         check.setMaxSubmissionSize(250);
         
-        assertThat("Postcondition: run with violations should not succeed",
-                check.run(directory), is(false));
+        boolean success = check.run(directory);
         
-        assertThat("Postcondition: should create error message for violation",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("file-size", MessageType.ERROR, "Submission size is too large")
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should create an error message", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("file-size", MessageType.ERROR, "Submission size is too large")
+                )))
+        );
     }
     
     @Test
+    @DisplayName("getters return previously set values")
     public void getters() {
         FileSizeCheck check = new FileSizeCheck();
         
-        assertThat("should return default value",
-                check.getMaxFileSize(), is(10485760L));
-        assertThat("should return default value",
-                check.getMaxSubmissionSize(), is(10485760L));
+        assertAll("should return default values",
+            () -> assertThat(check.getMaxFileSize(), is(10485760L)),
+            () -> assertThat(check.getMaxSubmissionSize(), is(10485760L))
+        );
         
         check.setMaxFileSize(123);
         check.setMaxSubmissionSize(456);
         
-        assertThat(check.getMaxFileSize(), is(123L));
-        assertThat(check.getMaxSubmissionSize(), is(456L));
-        
+        assertAll(
+            () -> assertThat(check.getMaxFileSize(), is(123L)),
+            () -> assertThat(check.getMaxSubmissionSize(), is(456L))
+        );
     }
     
     @BeforeAll
