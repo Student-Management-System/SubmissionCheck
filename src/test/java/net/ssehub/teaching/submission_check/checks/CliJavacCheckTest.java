@@ -17,10 +17,12 @@ package net.ssehub.teaching.submission_check.checks;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
@@ -35,6 +37,7 @@ public class CliJavacCheckTest extends JavacCheckTest {
     }
     
     @Test
+    @DisplayName("creates internal error for invalid javac command")
     public void invalidJavacCommand() {
         testDirecotry = TESTDATA;
         assertThat("Precondition: directory with test files does not exist",
@@ -43,16 +46,18 @@ public class CliJavacCheckTest extends JavacCheckTest {
         CliJavacCheck check = creatInstance();
         check.setJavacCommand("doesnt_exist");
         
-        assertThat("Postcondition: run with invalid javac command should not succeed",
-                check.run(testDirecotry), is(false));
+        boolean success = check.run(testDirecotry);
         
-        assertThat("Postcondition: should contain result messages about internal error",
-                check.getResultMessages(), is(Arrays.asList(
-                        new ResultMessage("javac", MessageType.ERROR, "An internal error occurred while running javac")
-                )));
+        assertAll(
+            () -> assertThat("Postcondition: should not succeed", success, is(false)),
+            () -> assertThat("Postcondition: should contain result messages about internal error", check.getResultMessages(), is(Arrays.asList(
+                    new ResultMessage("javac", MessageType.ERROR, "An internal error occurred while running javac")
+                )))
+        );
     }
     
     @Test
+    @DisplayName("setter and getter for javac command work")
     public void setJavacCommand() {
         CliJavacCheck check = new CliJavacCheck();
         
