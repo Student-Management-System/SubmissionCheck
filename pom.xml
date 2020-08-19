@@ -190,9 +190,9 @@
 			<version>8.34</version>
 		</dependency>
 		<dependency>
-			<groupId>ssehub.net.studentmgmt</groupId>
+			<groupId>net.ssehub.studentmgmt</groupId>
 			<artifactId>submitter-protocol</artifactId>
-			<version>0.0.1</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
