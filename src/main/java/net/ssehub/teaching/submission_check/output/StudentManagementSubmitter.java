@@ -221,9 +221,9 @@ public class StudentManagementSubmitter {
         assessment.clearPartialAssessments();
         
         for (ResultMessage msg : messages) {
-            String lineNo = msg.getLine() != null ? msg.getLine().toString() : null;
             String path = msg.getFile() != null ? msg.getFile().getPath() : null;
-            assessment.addAutomaticReview(msg.getCheckName(), msg.getType().name(), msg.getMessage(), path, lineNo);
+            assessment.addAutomaticReview(msg.getCheckName(), msg.getType().name(), msg.getMessage(), path,
+                msg.getLine());
         }
         
         return protocol.submitAssessment(assignment, assessment);
