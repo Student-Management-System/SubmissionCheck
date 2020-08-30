@@ -6,7 +6,10 @@ follow our formatting rules.
 
 This project is a complete rewrite of the old jSvnSubmitHook.
 
-[![Build Status](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/badge/icon?style=flat-square)](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/)
+[![Build](https://img.shields.io/jenkins/build?jobUrl=https%3A%2F%2Fjenkins-2.sse.uni-hildesheim.de%2Fjob%2FTeaching_SubmissionCheck%2F)](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/)
+[![Tests](https://img.shields.io/jenkins/tests?jobUrl=https%3A%2F%2Fjenkins-2.sse.uni-hildesheim.de%2Fjob%2FTeaching_SubmissionCheck%2F)](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/lastBuild/testReport/)
+[![Coverage](https://img.shields.io/jenkins/coverage/jacoco?jobUrl=https%3A%2F%2Fjenkins-2.sse.uni-hildesheim.de%2Fjob%2FTeaching_SubmissionCheck%2F)](https://jenkins-2.sse.uni-hildesheim.de/job/Teaching_SubmissionCheck/lastBuild/jacoco/)
+[![License](https://img.shields.io/github/license/Student-Management-System/SubmissionCheck)](https://github.com/Student-Management-System/SubmissionCheck/blob/master/LICENSE)
 
 ## Checks
 
