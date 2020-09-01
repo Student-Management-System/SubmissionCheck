@@ -63,8 +63,8 @@ public class StudentManagementSubmitterTest {
         public Assessment loadAssessmentByName(Assignment assignment, String name) {
             AssessmentDto dto = new AssessmentDto();
             UserDto user = new UserDto();
-            user.setUsername("A user");
-            user.setRzName("auser");
+            user.setDisplayName("A user");
+            user.setUsername("auser");
             user.setEmail("email@example.com");
             dto.setUser(user);
             assessment = new Assessment(dto, assignment);
