@@ -261,15 +261,18 @@ public class EclipseProjectFile {
         NodeList nested = node.getChildNodes();
         
         if (nested.getLength() < 1) {
-            throw new InvalidEclipseConfigException(node.getNodeName() + " should have a nested text node");
+            throw new InvalidEclipseConfigException(
+                    "<" + node.getNodeName() + "> should have a nested text node");
         }
         
         if (nested.getLength() > 1) {
-            throw new InvalidEclipseConfigException(node.getNodeName() + " should only have one nested text node");
+            throw new InvalidEclipseConfigException(
+                    "<" + node.getNodeName() + "> should only have one nested text node");
         }
         
         if (nested.item(0).getNodeType() != Node.TEXT_NODE) {
-            throw new InvalidEclipseConfigException(node.getNodeName() + " should only have one nested text node");
+            throw new InvalidEclipseConfigException(
+                    "<" + node.getNodeName() + "> should only have one nested text node");
         }
     }
     

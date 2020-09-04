@@ -46,30 +46,44 @@ public class SubmissionHookTest {
     
     @Test
     public void tooFewArguments() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        IllegalArgumentException exc = assertThrows(IllegalArgumentException.class, () -> {
             new SubmissionHook(new String[] {"a", "b"}, new MockSvnInterface());
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Expected exactly 3 arguments, got 2"));
     }
     
     @Test
     public void tooManyArguments() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        IllegalArgumentException exc = assertThrows(IllegalArgumentException.class, () -> {
             new SubmissionHook(new String[] {"a", "b", "c", "d"}, new MockSvnInterface());
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Expected exactly 3 arguments, got 4"));
     }
     
     @Test
     public void invalidPhase() {
-        assertThrows(IllegalArgumentException.class, () -> {
+        IllegalArgumentException exc = assertThrows(IllegalArgumentException.class, () -> {
             new SubmissionHook(new String[] {"invalid", TESTDATA.getAbsolutePath(), "42"}, new MockSvnInterface());
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Expected PRE or POST, got invalid"));
     }
     
     @Test
     public void nonExistingRepository() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new SubmissionHook(new String[] {"PRE", new File(TESTDATA, "doesnt_exist").getAbsolutePath(), "42"}, new MockSvnInterface());
+        File invalid = new File(TESTDATA, "doesnt_exist");
+        
+        IllegalArgumentException exc = assertThrows(IllegalArgumentException.class, () -> {
+            new SubmissionHook(new String[] {"PRE", invalid.getAbsolutePath(), "42"}, new MockSvnInterface());
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is(invalid.getAbsolutePath() + " is not a directory"));
     }
     
     @Test

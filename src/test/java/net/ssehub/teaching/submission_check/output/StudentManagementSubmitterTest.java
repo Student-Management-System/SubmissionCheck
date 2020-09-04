@@ -15,6 +15,7 @@
  */
 package net.ssehub.teaching.submission_check.output;
 
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 
 import net.ssehub.exercisesubmitter.protocol.backend.DataNotFoundException;
+import net.ssehub.exercisesubmitter.protocol.backend.DataNotFoundException.DataType;
 import net.ssehub.exercisesubmitter.protocol.backend.NetworkException;
 import net.ssehub.exercisesubmitter.protocol.frontend.Assessment;
 import net.ssehub.exercisesubmitter.protocol.frontend.Assignment;
@@ -132,9 +134,15 @@ public class StudentManagementSubmitterTest {
         Submission submission = new Submission("exercise", "auser");
         ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
         
-        assertThrows(DataNotFoundException.class, () -> {
+        DataNotFoundException exc = assertThrows(DataNotFoundException.class, () -> {
             submitter.submit(submission, Arrays.asList(msg));
         });
+        
+        assertAll(
+            () -> assertEquals("For the given submission was no configured assignment found on server", exc.getMessage()),
+            () -> assertEquals("exercise", exc.getMissingItem()),
+            () -> assertEquals(DataType.ASSIGNMENTS_NOT_FOUND, exc.getType())
+        );
     }
     
 }

@@ -80,9 +80,12 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
 
         expectedTransactionInfo = new TransactionInfo(TESTDATA, null, "42-g", Phase.PRE_COMMIT);
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             this.createTransactionInfo(Phase.PRE_COMMIT, TESTDATA, "42-g");
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("svnlook author created 2 lines of output, expected 1"));
     }
     
     @Test
@@ -184,9 +187,12 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 "",
         };
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             getModifiedSubmissions(info);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Got empty line from svnlook changed"));
     }
     
     @Test
@@ -198,9 +204,12 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
                 "X Exercise01/something"
         };
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             getModifiedSubmissions(info);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Got invalid change 'X ' in line X Exercise01/something"));
     }
     
     @Test

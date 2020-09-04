@@ -49,9 +49,12 @@ public class EclipseClasspathFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseClasspathFile(file);
         });
+        
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Could not parse XML"));
     }
     
     @Test
@@ -60,9 +63,12 @@ public class EclipseClasspathFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseClasspathFile(file);
         });
+        
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid root node: not_classpath"));
     }
     
     @Test
@@ -83,9 +89,12 @@ public class EclipseClasspathFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseClasspathFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid node in <classpath>: somethingelse"));
     }
     
     @Test
@@ -125,9 +134,12 @@ public class EclipseClasspathFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseClasspathFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Entry does not have a \"kind\" attribute"));
     }
     
     @Test
@@ -136,9 +148,12 @@ public class EclipseClasspathFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseClasspathFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Entry does not have a \"path\" attribute"));
     }
     
     @Test

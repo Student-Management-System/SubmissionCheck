@@ -213,7 +213,7 @@ public class StudentManagementSubmitter {
     public boolean submit(Submission submission, List<ResultMessage> messages) throws NetworkException {
         Assignment assignment = protocol.getAssignmentByName(submission.getExercise());
         if (null == assignment) {
-            throw new DataNotFoundException("For the given submission was no configured assignment found on server.",
+            throw new DataNotFoundException("For the given submission was no configured assignment found on server",
                 submission.getExercise(), DataType.ASSIGNMENTS_NOT_FOUND);
         }
         

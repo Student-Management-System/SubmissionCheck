@@ -155,7 +155,8 @@ public class Configuration {
     private String getRequiredProperty(String key, Submission submission) throws ConfigurationException {
         String value = getProperty(key, submission);
         if (value == null) {
-            throw new ConfigurationException("Required value " + key + " is missing for submission " + submission);
+            throw new ConfigurationException("Required value " + key + " is missing for submission "
+                    + submission.getExercise());
         }
         return value;
     }

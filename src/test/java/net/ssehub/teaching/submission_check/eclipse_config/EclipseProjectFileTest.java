@@ -47,9 +47,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Could not parse XML"));
     }
     
     @Test
@@ -58,9 +61,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid root node: not_project"));
     }
     
     @Test
@@ -69,9 +75,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Didn't find <name> node"));
     }
     
     @Test
@@ -80,9 +89,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Didn't find <buildSpec> node"));
     }
     
     @Test
@@ -91,9 +103,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Didn't find <natures> node"));
     }
     
     @Test
@@ -102,9 +117,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Found two <name> nodes"));
     }
     
     @Test
@@ -113,9 +131,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Found two <buildSpec> nodes"));
     }
     
     @Test
@@ -124,9 +145,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Found two <natures> nodes"));
     }
     
     @Test
@@ -135,9 +159,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("<name> should only have one nested text node"));
     }
     
     @Test
@@ -146,9 +173,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("<name> should have a nested text node"));
     }
     
     @Test
@@ -192,9 +222,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid node in <buildSpec>: somethingUnwanted"));
     }
     
     @Test
@@ -203,9 +236,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Didn't find <name> in <buildCommand>"));
     }
     
     @Test
@@ -214,9 +250,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
 
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Found multiple <name> nodes in <buildCommand>"));
     }
     
     @Test
@@ -225,9 +264,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
 
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("<name> should only have one nested text node"));
     }
     
     @Test
@@ -253,9 +295,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
         
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid node in <natures>: something"));
     }
     
     @Test
@@ -264,9 +309,12 @@ public class EclipseProjectFileTest {
         assertThat("Precondition: test file should exist",
                 file.isFile(), is(true));
 
-        assertThrows(InvalidEclipseConfigException.class, () -> {
+        InvalidEclipseConfigException exc = assertThrows(InvalidEclipseConfigException.class, () -> {
             new EclipseProjectFile(file);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("<nature> should only have one nested text node"));
     }
     
     @Test

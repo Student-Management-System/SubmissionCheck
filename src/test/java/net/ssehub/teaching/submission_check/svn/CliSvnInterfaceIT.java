@@ -78,9 +78,12 @@ public class CliSvnInterfaceIT {
     public void postInvalidRepo() throws IOException, SvnException {
         CliSvnInterface svn = new CliSvnInterface();
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             svn.createTransactionInfo(Phase.POST_COMMIT, TESTDATA, "1");
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("svnlook exited with exit code 1"));
     }
     
     @Test
@@ -89,9 +92,12 @@ public class CliSvnInterfaceIT {
         
         CliSvnInterface svn = new CliSvnInterface();
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             svn.createTransactionInfo(Phase.POST_COMMIT, repo, "15");
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("svnlook exited with exit code 1"));
     }
     
     @Test
@@ -109,9 +115,12 @@ public class CliSvnInterfaceIT {
     public void preInvalidRepo() throws IOException, SvnException {
         CliSvnInterface svn = new CliSvnInterface();
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             svn.createTransactionInfo(Phase.PRE_COMMIT, TESTDATA, "1");
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("svnlook exited with exit code 1"));
     }
     
     @Test
@@ -120,9 +129,12 @@ public class CliSvnInterfaceIT {
         
         CliSvnInterface svn = new CliSvnInterface();
         
-        assertThrows(SvnException.class, () -> {
+        SvnException exc = assertThrows(SvnException.class, () -> {
             svn.createTransactionInfo(Phase.PRE_COMMIT, repo, "2-3");
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("svnlook exited with exit code 1"));
     }
     
     @Test

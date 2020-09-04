@@ -266,9 +266,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createFileSizeCheck(new Submission("Exercise01", ""));
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid maxFileSize setting: NotANumber"));
     }
     
     @Test
@@ -279,9 +282,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createFileSizeCheck(new Submission("Exercise01", ""));
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid maxSize setting: error"));
     }
     
     @Test
@@ -319,9 +325,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createEncodingCheck(new Submission("Exercise01", ""));
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid encoding: this is not an encoding"));
     }
     
     @Test
@@ -439,9 +448,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createJavacCheck(new Submission("Exercise01", ""), false);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid Java version: wrong"));
     }
     
     @Test
@@ -452,9 +464,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createJavacCheck(new Submission("Exercise01", ""), false);
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid encoding: this is not an encoding"));
     }
     
     @Test
@@ -499,9 +514,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createCheckstyleCheck(new Submission("Exercise01", ""));
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Required checkstyle.rules not configured for submission Exercise01"));
     }
     
     @Test
@@ -512,9 +530,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.createCheckstyleCheck(new Submission("Exercise01", ""));
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Invalid encoding: this is wrong"));
     }
     
     @Test
@@ -563,9 +584,12 @@ public class ConfigurationTest {
         
         Configuration config = new Configuration(configFile);
         
-        assertThrows(ConfigurationException.class, () -> {
+        ConfigurationException exc = assertThrows(ConfigurationException.class, () -> {
             config.getStudentManagementSystemConfiguration(new Submission("Exercise01", "Group01"));
         });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Required value managementSystem.url is missing for submission Exercise01"));
     }
     
     @Test
