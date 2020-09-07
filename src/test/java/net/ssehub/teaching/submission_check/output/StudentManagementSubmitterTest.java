@@ -34,7 +34,7 @@ import net.ssehub.exercisesubmitter.protocol.frontend.Assignment.State;
 import net.ssehub.exercisesubmitter.protocol.frontend.SubmissionHookProtocol;
 import net.ssehub.studentmgmt.backend_api.model.AssessmentDto;
 import net.ssehub.studentmgmt.backend_api.model.PartialAssessmentDto;
-import net.ssehub.studentmgmt.backend_api.model.UserDto;
+import net.ssehub.studentmgmt.backend_api.model.ParticipantDto;
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
 import net.ssehub.teaching.submission_check.Submission;
@@ -64,11 +64,11 @@ public class StudentManagementSubmitterTest {
         @Override
         public Assessment loadAssessmentByName(Assignment assignment, String name) {
             AssessmentDto dto = new AssessmentDto();
-            UserDto user = new UserDto();
+            ParticipantDto user = new ParticipantDto();
             user.setDisplayName("A user");
             user.setUsername("auser");
             user.setEmail("email@example.com");
-            dto.setUser(user);
+            dto.setParticipant(user);
             assessment = new Assessment(dto, assignment);
             return assessment;
         }
