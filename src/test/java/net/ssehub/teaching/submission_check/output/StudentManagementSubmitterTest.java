@@ -57,7 +57,7 @@ public class StudentManagementSubmitterTest {
         
         @Override
         public Assignment getAssignmentByName(String name) {
-            assignment = new Assignment(name, null, State.SUBMISSION, false);
+            assignment = new Assignment(name, null, State.SUBMISSION, false, 0);
             return assignment;
         }
         
