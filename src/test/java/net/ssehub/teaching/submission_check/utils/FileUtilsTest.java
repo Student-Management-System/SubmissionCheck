@@ -686,7 +686,7 @@ public class FileUtilsTest {
     }
     
     @BeforeEach
-    public static void createTempDirectory() {
+    public void createTempDirectory() {
         if (!TEMP_DIRECTORY.isDirectory()) {
             boolean created = TEMP_DIRECTORY.mkdir();
             if (!created) {
@@ -696,7 +696,7 @@ public class FileUtilsTest {
     }
     
     @AfterEach
-    public static void clearTempDirectory() throws IOException {
+    public void clearTempDirectory() throws IOException {
         if (TEMP_DIRECTORY.isDirectory()) {
             Files.walkFileTree(TEMP_DIRECTORY.toPath(), new SimpleFileVisitor<Path>() {
                 
