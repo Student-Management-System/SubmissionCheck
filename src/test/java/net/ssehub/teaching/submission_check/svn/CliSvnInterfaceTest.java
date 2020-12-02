@@ -17,6 +17,7 @@ package net.ssehub.teaching.submission_check.svn;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -193,6 +194,36 @@ public class CliSvnInterfaceTest extends CliSvnInterface {
 
         assertThat("Postcondition: exception has correct message",
                 exc.getMessage(), is("Got empty line from svnlook changed"));
+    }
+    
+    @Test
+    public void modifiedSubmissionsTooShortLine() throws SvnException {
+        TransactionInfo info = new TransactionInfo(TESTDATA, "other", "42-g", Phase.POST_COMMIT);
+        expectedTransactionInfo = info;
+        
+        modifiedFiles = new String[] {
+                "D Exercise01/something",
+                "A ",
+        };
+        
+        SvnException exc = assertThrows(SvnException.class, () -> {
+            getModifiedSubmissions(info);
+        });
+
+        assertThat("Postcondition: exception has correct message",
+                exc.getMessage(), is("Got empty line from svnlook changed"));
+    }
+    
+    @Test
+    public void modifiedSubmissionsShortestValidLine() throws SvnException {
+        TransactionInfo info = new TransactionInfo(TESTDATA, "other", "42-g", Phase.POST_COMMIT);
+        expectedTransactionInfo = info;
+        
+        modifiedFiles = new String[] {
+                "A V",
+        };
+        
+        assertDoesNotThrow(() -> getModifiedSubmissions(info));
     }
     
     @Test

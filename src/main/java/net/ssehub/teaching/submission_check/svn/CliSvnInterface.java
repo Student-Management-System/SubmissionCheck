@@ -229,7 +229,7 @@ public class CliSvnInterface implements ISvnInterface {
      * @throws SvnException If the line has an invalid format.
      */
     private Submission getChangedSubmissionFolder(String changeLine) throws SvnException {
-        if (changeLine.length() < 2) {
+        if (changeLine.length() < 3) {
             throw new SvnException("Got empty line from svnlook changed");
         }
         
