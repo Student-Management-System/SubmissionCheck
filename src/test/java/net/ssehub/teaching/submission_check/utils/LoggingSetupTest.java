@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 import java.util.logging.StreamHandler;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 public class LoggingSetupTest {
@@ -225,6 +226,7 @@ public class LoggingSetupTest {
     }
     
     @Test
+    @Tag("pitest-ignore")
     public void fileLoggingFallsBackToStdoutLogging() throws IOException {
         PrintStream oldOut = System.out;
         

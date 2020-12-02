@@ -171,11 +171,10 @@
 				</executions>
 
 				<configuration>
-					<excludedTestClasses>
-						<excludedTestClasse>net.ssehub.teaching.submission_check.checks.CliJavacCheckTest</excludedTestClasse>
-						<excludedTestClasse>net.ssehub.teaching.submission_check.utils.LoggingSetupTest</excludedTestClasse>
-					</excludedTestClasses>
-					
+					<excludedGroups>
+						<excludedGroup>pitest-ignore</excludedGroup>
+					</excludedGroups>
+
 					<threads>2</threads>
 
 					<outputFormats>

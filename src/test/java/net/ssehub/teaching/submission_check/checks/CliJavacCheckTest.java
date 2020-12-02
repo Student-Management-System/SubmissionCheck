@@ -23,6 +23,7 @@ import java.util.Arrays;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 
 import net.ssehub.teaching.submission_check.ResultMessage;
@@ -66,6 +67,24 @@ public class CliJavacCheckTest extends JavacCheckTest {
         check.setJavacCommand("/opt/some/javac");
         
         assertThat("should have explicitly set value", check.getJavacCommand(), is("/opt/some/javac"));
+    }
+    
+    /*
+     * Add pitest-ignore tag to some test cases from our parent class
+     */
+    
+    @Test
+    @Tag("pitest-ignore")
+    @Override
+    public void submissionCheckClassesNotInClasspath() {
+        super.submissionCheckClassesNotInClasspath();
+    }
+    
+    @Test
+    @Tag("pitest-ignore")
+    @Override
+    public void classpathMissingLibrary() {
+        super.classpathMissingLibrary();
     }
     
     @BeforeAll
