@@ -314,7 +314,7 @@ public class SubmissionHookIT {
         assertThat("Precondition: test configuration should not exit",
                 configurationFile.exists(), is(false));
         
-        SubmissionHook hook = new SubmissionHook(new String[] {"POST", repo.getPath(), "7"},  new CliSvnInterface());
+        SubmissionHook hook = new SubmissionHook(new String[] {"PRE", repo.getPath(), "7"},  new CliSvnInterface());
         
         int exitCode = hook.execute(configurationFile);
         
