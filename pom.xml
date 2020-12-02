@@ -156,6 +156,42 @@
 			</plugin>
 
 			<plugin>
+				<groupId>org.pitest</groupId>
+				<artifactId>pitest-maven</artifactId>
+				<version>1.5.1</version>
+
+				<executions>
+					<execution>
+						<id>pitest</id>
+						<phase>test</phase>
+						<goals>
+							<goal>mutationCoverage</goal>
+						</goals>
+					</execution>
+				</executions>
+
+				<configuration>
+					<excludedTestClasses>
+						<excludedTestClasse>net.ssehub.teaching.submission_check.checks.CliJavacCheckTest</excludedTestClasse>
+						<excludedTestClasse>net.ssehub.teaching.submission_check.utils.LoggingSetupTest</excludedTestClasse>
+					</excludedTestClasses>
+
+					<outputFormats>
+						<outputFormat>html</outputFormat>
+						<outputFormat>xml</outputFormat>
+					</outputFormats>
+				</configuration>
+
+				<dependencies>
+					<dependency>
+						<groupId>org.pitest</groupId>
+						<artifactId>pitest-junit5-plugin</artifactId>
+						<version>0.12</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
+			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>3.2.0</version>
 				<executions>
