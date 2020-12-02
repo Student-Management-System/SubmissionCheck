@@ -135,7 +135,7 @@ public class SubmissionHookIT {
         hook.queryMetadataFromSvn();
         hook.runChecksOnAllModifiedSubmissions();
         
-        assertThat("Postcondition: execution should be successful",
+        assertThat("Postcondition: execution should not be successful",
                 hook.getResultCollector().getAllSuccessful(), is(false));
         assertThat("Postcondition: collector should have not messages",
                 hook.getResultCollector().getAllMessages(), is(Arrays.asList(
@@ -324,7 +324,6 @@ public class SubmissionHookIT {
                 hook.getResultCollector().getAllMessages(), is(Arrays.asList(
                         new ResultMessage("hook", MessageType.ERROR, "An internal error occurred")
                 )));
-            
     }
     
     @BeforeAll
