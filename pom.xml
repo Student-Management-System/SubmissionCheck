@@ -175,6 +175,8 @@
 						<excludedTestClasse>net.ssehub.teaching.submission_check.checks.CliJavacCheckTest</excludedTestClasse>
 						<excludedTestClasse>net.ssehub.teaching.submission_check.utils.LoggingSetupTest</excludedTestClasse>
 					</excludedTestClasses>
+					
+					<threads>2</threads>
 
 					<outputFormats>
 						<outputFormat>html</outputFormat>
