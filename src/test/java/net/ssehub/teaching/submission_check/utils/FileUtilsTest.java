@@ -26,10 +26,17 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.nio.file.FileVisitResult;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.HashSet;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -38,6 +45,8 @@ import org.xml.sax.SAXException;
 public class FileUtilsTest {
     
     private static final File TESTDATA = new File("src/test/resources/FileUtilsTest");
+    
+    private static final File TEMP_DIRECTORY = new File(TESTDATA, "temp_directory");
 
     public static void setRigFileOperationsToFail(boolean fileReadingShouldFail) {
     	FileUtils.setRigFileOperationsToFail(fileReadingShouldFail);
@@ -506,63 +515,57 @@ public class FileUtilsTest {
     
     @Test
     public void deleteDirectoryEmpty() throws IOException {
-        File directory = new File(TESTDATA, "temp_directory");
-        directory.mkdir();
         assertThat("Precondition: directory should exist",
-                directory.isDirectory(), is(true));
+                TEMP_DIRECTORY.isDirectory(), is(true));
         assertThat("Precondition: directory should be empty",
-                directory.listFiles().length, is(0));
+                TEMP_DIRECTORY.listFiles().length, is(0));
         
-        FileUtils.deleteDirectory(directory);
+        FileUtils.deleteDirectory(TEMP_DIRECTORY);
         
         assertThat("Postcondition: directory should not exist",
-                directory.exists(), is(false));
+                TEMP_DIRECTORY.exists(), is(false));
     }
     
     @Test
     public void deleteDirectorySingleFileInside() throws IOException {
-        File directory = new File(TESTDATA, "temp_directory");
-        directory.mkdir();
         assertThat("Precondition: directory should exist",
-                directory.isDirectory(), is(true));
+                TEMP_DIRECTORY.isDirectory(), is(true));
         assertThat("Precondition: directory should be empty",
-                directory.listFiles().length, is(0));
+                TEMP_DIRECTORY.listFiles().length, is(0));
         
-        File file = new File(directory, "some_file.txt");
+        File file = new File(TEMP_DIRECTORY, "some_file.txt");
         file.createNewFile();
         
         assertThat("Precondition: directory should not be empty",
-                directory.listFiles().length, is(1));
+                TEMP_DIRECTORY.listFiles().length, is(1));
         
-        FileUtils.deleteDirectory(directory);
+        FileUtils.deleteDirectory(TEMP_DIRECTORY);
         
         assertThat("Postcondition: directory should not exist",
-                directory.exists(), is(false));
+                TEMP_DIRECTORY.exists(), is(false));
         assertThat("Postcondition: file should not exist",
                 file.exists(), is(false));
     }
     
     @Test
     public void deleteDirectoryMultipleFilesInside() throws IOException {
-        File directory = new File(TESTDATA, "temp_directory");
-        directory.mkdir();
         assertThat("Precondition: directory should exist",
-                directory.isDirectory(), is(true));
+                TEMP_DIRECTORY.isDirectory(), is(true));
         assertThat("Precondition: directory should be empty",
-                directory.listFiles().length, is(0));
+                TEMP_DIRECTORY.listFiles().length, is(0));
         
         for (int i = 0; i < 10; i++) {
-            File file = new File(directory, "some_file" + i + ".txt");
+            File file = new File(TEMP_DIRECTORY, "some_file" + i + ".txt");
             file.createNewFile();
         }
         
         assertThat("Precondition: directory should not be empty",
-                directory.listFiles().length, is(10));
+                TEMP_DIRECTORY.listFiles().length, is(10));
         
-        FileUtils.deleteDirectory(directory);
+        FileUtils.deleteDirectory(TEMP_DIRECTORY);
         
         assertThat("Postcondition: directory should not exist",
-                directory.exists(), is(false));
+                TEMP_DIRECTORY.exists(), is(false));
     }
     
     @Test
@@ -588,17 +591,15 @@ public class FileUtilsTest {
     
     @Test
     public void deleteDirectoryNestedDirectories() throws IOException {
-        File directory = new File(TESTDATA, "temp_directory");
-        directory.mkdir();
         assertThat("Precondition: directory should exist",
-                directory.isDirectory(), is(true));
+                TEMP_DIRECTORY.isDirectory(), is(true));
         assertThat("Precondition: directory should be empty",
-                directory.listFiles().length, is(0));
+                TEMP_DIRECTORY.listFiles().length, is(0));
         
-        File nested = new File(directory, "nested");
+        File nested = new File(TEMP_DIRECTORY, "nested");
         nested.mkdir();
         assertThat("Precondition: nested directory should exist",
-                directory.isDirectory(), is(true));
+                TEMP_DIRECTORY.isDirectory(), is(true));
         
         for (int i = 0; i < 10; i++) {
             File file = new File(nested, "some_file" + i + ".txt");
@@ -606,20 +607,20 @@ public class FileUtilsTest {
         }
         
         for (int i = 0; i < 10; i++) {
-            File file = new File(directory, "some_file" + i + ".txt");
+            File file = new File(TEMP_DIRECTORY, "some_file" + i + ".txt");
             file.createNewFile();
         }
         
         assertThat("Precondition: directory should not be empty",
-                directory.listFiles().length, is(11));
+                TEMP_DIRECTORY.listFiles().length, is(11));
         
         assertThat("Precondition: nested directory should not be empty",
                 nested.listFiles().length, is(10));
         
-        FileUtils.deleteDirectory(directory);
+        FileUtils.deleteDirectory(TEMP_DIRECTORY);
         
         assertThat("Postcondition: directory should not exist",
-                directory.exists(), is(false));
+                TEMP_DIRECTORY.exists(), is(false));
         assertThat("Postcondition: nested directory should not exist",
                 nested.exists(), is(false));
     }
@@ -682,6 +683,37 @@ public class FileUtilsTest {
                 nested.createNewFile(), is(true));
         assertThat("postcondition: nested file should exist",
                 nested.isFile(), is(true));
+    }
+    
+    @BeforeEach
+    public static void createTempDirectory() {
+        if (!TEMP_DIRECTORY.isDirectory()) {
+            boolean created = TEMP_DIRECTORY.mkdir();
+            if (!created) {
+                fail("Setup: Could not create empty temporary test directory " + TEMP_DIRECTORY.getPath());
+            }
+        }
+    }
+    
+    @AfterEach
+    public static void clearTempDirectory() throws IOException {
+        if (TEMP_DIRECTORY.isDirectory()) {
+            Files.walkFileTree(TEMP_DIRECTORY.toPath(), new SimpleFileVisitor<Path>() {
+                
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+                    Files.delete(dir);
+                    return FileVisitResult.CONTINUE;
+                }
+                
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+                
+            });
+        }
     }
     
     @BeforeAll
