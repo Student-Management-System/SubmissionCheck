@@ -61,6 +61,24 @@ public class FileSizeCheckTest {
                 directory.isDirectory(), is(true));
         
         FileSizeCheck check = new FileSizeCheck();
+        check.setMaxFileSize(200);
+        
+        boolean success = check.run(directory);
+        
+        assertAll(
+                () -> assertThat("Postcondition: should succeed", success, is(true)),
+                () -> assertThat("Postcondition: should create no messages", check.getResultMessages(), is(Arrays.asList()))
+                );
+    }
+    
+    @Test
+    @DisplayName("succeeds on single file that holds the file-size limit exactly")
+    public void sinlgeFileLimitHeldExactly() {
+        File directory = new File(TESTDATA, "singleFile100Bytes");
+        assertThat("Precondition: directory with test files should exist",
+                directory.isDirectory(), is(true));
+        
+        FileSizeCheck check = new FileSizeCheck();
         check.setMaxFileSize(100);
         
         boolean success = check.run(directory);
@@ -188,6 +206,25 @@ public class FileSizeCheckTest {
             () -> assertThat("Postcondition: should create an error message", check.getResultMessages(), is(Arrays.asList(
                     new ResultMessage("file-size", MessageType.ERROR, "Submission size is too large")
                 )))
+        );
+    }
+    
+    @Test
+    @DisplayName("succeeds with multiple files adding up to exactly the submission-size limit")
+    public void multipleFilesSubmissionHeldExactly() {
+        File directory = new File(TESTDATA, "multipleFiles");
+        assertThat("Precondition: directory with test files should exist",
+                directory.isDirectory(), is(true));
+        
+        FileSizeCheck check = new FileSizeCheck();
+        check.setMaxFileSize(200);
+        check.setMaxSubmissionSize(300);
+        
+        boolean success = check.run(directory);
+        
+        assertAll(
+            () -> assertThat("Postcondition: should succeed", success, is(true)),
+            () -> assertThat("Postcondition: should create no error messages", check.getResultMessages(), is(Arrays.asList()))
         );
     }
     
