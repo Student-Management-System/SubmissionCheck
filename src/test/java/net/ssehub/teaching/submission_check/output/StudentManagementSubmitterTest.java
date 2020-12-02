@@ -17,6 +17,7 @@ package net.ssehub.teaching.submission_check.output;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -51,6 +52,8 @@ public class StudentManagementSubmitterTest {
     private static class MockSubmissionHookProtocol extends SubmissionHookProtocol {
 
         private boolean createInitialPartialAssessments = false;
+        
+        private boolean submitReturnValue = true;
         
         private Assignment assignment;
         private Assessment assessment;
@@ -93,7 +96,7 @@ public class StudentManagementSubmitterTest {
         
         @Override
         public boolean submitAssessment(Assignment assignment, Assessment assessment) {
-            return true;
+            return submitReturnValue;
         }
         
     }
@@ -186,6 +189,18 @@ public class StudentManagementSubmitterTest {
         assertEquals(msg.getCheckName(), partial.getType());
         assertEquals(msg.getType().name(), partial.getSeverity().name());
         assertEquals(msg.getMessage(), partial.getComment());
+    }
+    
+    @Test
+    public void returnValueFalse() throws NetworkException {
+        // set up submission
+        MockSubmissionHookProtocol protocol = new MockSubmissionHookProtocol();
+        protocol.submitReturnValue = false;
+        StudentManagementSubmitter submitter = new StudentManagementSubmitter(protocol);
+        Submission submission = new Submission("exercise", "auser");
+        
+        // run submission
+        assertFalse(submitter.submit(submission, Arrays.asList()));
     }
     
     @Test
