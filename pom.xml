@@ -4,7 +4,7 @@
 
 	<groupId>net.ssehub.teaching.submission_check</groupId>
 	<artifactId>submission-check</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 
 	<name>SubmissionCheck</name>
 	<description>A SVN commit-hook that runs several checks for student	submissions.</description>
@@ -229,7 +229,7 @@
 		<dependency>
 			<groupId>net.ssehub.studentmgmt</groupId>
 			<artifactId>submitter-protocol</artifactId>
-			<version>1.0.1</version>
+			<version>1.1.2</version>
 		</dependency>
 
 		<dependency>

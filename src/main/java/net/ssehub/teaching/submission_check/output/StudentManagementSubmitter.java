@@ -218,7 +218,7 @@ public class StudentManagementSubmitter {
         }
         
         Assessment assessment = protocol.loadAssessmentByName(assignment, submission.getGroup());
-        assessment.clearPartialAssessments();
+        assessment.clearPartialAssessments("checkstyle", "eclipse-configuration", "encoding", "file-size", "javac");
         
         for (ResultMessage msg : messages) {
             String path = msg.getFile() != null ? msg.getFile().getPath() : null;

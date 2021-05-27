@@ -22,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
-import java.math.BigDecimal;
 import java.util.Arrays;
 
 import org.junit.jupiter.api.Test;
@@ -35,8 +34,9 @@ import net.ssehub.exercisesubmitter.protocol.frontend.Assignment;
 import net.ssehub.exercisesubmitter.protocol.frontend.Assignment.State;
 import net.ssehub.exercisesubmitter.protocol.frontend.SubmissionHookProtocol;
 import net.ssehub.studentmgmt.backend_api.model.AssessmentDto;
+import net.ssehub.studentmgmt.backend_api.model.MarkerDto;
+import net.ssehub.studentmgmt.backend_api.model.MarkerDto.SeverityEnum;
 import net.ssehub.studentmgmt.backend_api.model.PartialAssessmentDto;
-import net.ssehub.studentmgmt.backend_api.model.PartialAssessmentDto.SeverityEnum;
 import net.ssehub.studentmgmt.backend_api.model.ParticipantDto;
 import net.ssehub.teaching.submission_check.ResultMessage;
 import net.ssehub.teaching.submission_check.ResultMessage.MessageType;
@@ -79,13 +79,13 @@ public class StudentManagementSubmitterTest {
             
             if (createInitialPartialAssessments) {
                 PartialAssessmentDto partialAssessment = new PartialAssessmentDto();
-                partialAssessment.setAssessmentId("123");
                 partialAssessment.setComment("some old comment");
-                partialAssessment.setId(new BigDecimal(321));
-                partialAssessment.setPath("Submission/Test.java");
-                partialAssessment.setSeverity(SeverityEnum.ERROR);
-                partialAssessment.setTitle("some old title");
-                partialAssessment.setType("some old type");
+                MarkerDto marker = new MarkerDto();
+                marker.setPath("Submission/Test.java");
+                marker.setSeverity(SeverityEnum.ERROR);
+                partialAssessment.setTitle("javac");
+                partialAssessment.setKey("javac");
+                partialAssessment.addMarkersItem(marker);
                 
                 dto.addPartialAssessmentsItem(partialAssessment);
             }
@@ -115,9 +115,9 @@ public class StudentManagementSubmitterTest {
         // Check that expected data was submitted
         assertEquals(1, protocol.assessment.partialAsssesmentSize());
         PartialAssessmentDto partial = protocol.assessment.getPartialAssessment(0);
-        assertEquals(msg.getCheckName(), partial.getType());
-        assertEquals(msg.getType().name(), partial.getSeverity().name());
-        assertEquals(msg.getMessage(), partial.getComment());
+        assertEquals(msg.getCheckName(), partial.getKey());
+        assertEquals(msg.getType().name(), partial.getMarkers().get(0).getSeverity().name());
+        assertEquals(msg.getMessage(), partial.getMarkers().get(0).getComment());
     }
     
     @Test
@@ -136,10 +136,11 @@ public class StudentManagementSubmitterTest {
         // Check that expected data was submitted
         assertEquals(1, protocol.assessment.partialAsssesmentSize());
         PartialAssessmentDto partial = protocol.assessment.getPartialAssessment(0);
-        assertEquals(msg.getCheckName(), partial.getType());
-        assertEquals(msg.getType().name(), partial.getSeverity().name());
-        assertEquals(msg.getMessage(), partial.getComment());
-        // TODO SE: Currently not fully supported by the student management server
+        assertEquals(msg.getCheckName(), partial.getKey());
+        assertEquals(msg.getType().name(), partial.getMarkers().get(0).getSeverity().name());
+        assertEquals(msg.getMessage(), partial.getMarkers().get(0).getComment());
+        assertEquals(msg.getFile().getPath(), partial.getMarkers().get(0).getPath());
+        assertEquals(msg.getLine().intValue(), partial.getMarkers().get(0).getStartLineNumber().intValue());
     }
     
     @Test
@@ -178,7 +179,9 @@ public class StudentManagementSubmitterTest {
         protocol.createInitialPartialAssessments = true;
         StudentManagementSubmitter submitter = new StudentManagementSubmitter(protocol);
         Submission submission = new Submission("exercise", "auser");
-        ResultMessage msg = new ResultMessage("Javac", MessageType.ERROR, "A compilation failure.");
+        ResultMessage msg = new ResultMessage("javac", MessageType.ERROR, "A compilation failure.");
+        msg.setFile(new File("mocked/File.java"));
+        msg.setLine(42);
         
         // run submission
         assertTrue(submitter.submit(submission, Arrays.asList(msg)));
@@ -186,9 +189,9 @@ public class StudentManagementSubmitterTest {
         // check that old partial assessment is cleared and correct one was inserted
         assertEquals(1, protocol.assessment.partialAsssesmentSize());
         PartialAssessmentDto partial = protocol.assessment.getPartialAssessment(0);
-        assertEquals(msg.getCheckName(), partial.getType());
-        assertEquals(msg.getType().name(), partial.getSeverity().name());
-        assertEquals(msg.getMessage(), partial.getComment());
+        assertEquals(msg.getCheckName(), partial.getKey());
+        assertEquals(msg.getType().name(), partial.getMarkers().get(0).getSeverity().name());
+        assertEquals(msg.getMessage(), partial.getMarkers().get(0).getComment());
     }
     
     @Test
